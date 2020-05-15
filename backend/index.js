@@ -2,6 +2,7 @@ import { ApolloServer } from "apollo-server";
 import typeDefs from "./typeDefs/typeDefs";
 import resolvers from "./resolvers/resolvers";
 import db from "./configs/database";
+import User from "./models/User";
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
@@ -18,6 +19,7 @@ async function startServer() {
   await db.sync({ force: true }).then(() => {
     console.log(`Database & tables created!`);
   });
+
   const server = new ApolloServer({ typeDefs, resolvers });
 
   // The `listen` method launches a web server.

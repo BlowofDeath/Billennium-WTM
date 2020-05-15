@@ -1,16 +1,26 @@
-const books = [
-  {
-    title: "Harry Potter and the Chamber of Secrets",
-    author: "J.K. Rowling",
-  },
-  {
-    title: "Jurassic Park",
-    author: "Michael Crichton",
-  },
-];
+import User from "../models/User";
 
 const resolvers = {
   Query: {
-    books: () => books,
+    users: async () => {
+      const user = await User.findAll();
+      console.log(user);
+      return user;
+    },
+  },
+  Mutation: {
+    user: (parent, { role, email, password, first_name, last_name }) => {
+      const user = User.create({
+        role,
+        email,
+        password,
+        first_name,
+        last_name,
+      });
+
+      return user;
+    },
   },
 };
+
+export default resolvers;
