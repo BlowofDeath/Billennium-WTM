@@ -29,7 +29,8 @@
     "merge-graphql-schemas": "^1.7.8",
     "nodemon": "^2.0.4",
     "sequelize": "^5.21.9",
-    "sqlite3": "^4.2.0"
+    "sqlite3": "^4.2.0",
+    "validator": "^13.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",

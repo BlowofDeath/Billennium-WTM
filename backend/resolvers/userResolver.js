@@ -2,6 +2,7 @@ import User from "../models/User";
 import bcrypt from "bcrypt";
 import { UserInputError } from "apollo-server";
 import jwt from "jsonwebtoken";
+import validator from "validator";
 
 const userResolver = {
   Query: {
@@ -11,16 +12,22 @@ const userResolver = {
       return user;
     },
     user: async (_, { email }) => {
+      if (!validator.isEmail(email))
+        throw new UserInputError("Wrong email adress");
       const user = await User.findOne({ where: { email } });
       return user;
     },
   },
   Mutation: {
     signup: async (_, { role, email, password, first_name, last_name }) => {
-      password = bcrypt.hashSync(password, 10);
       const exist = await User.findOne({ where: { email } });
-      console.log(exist);
       if (exist) throw new Error("User exist");
+      if (!validator.isEmail(email))
+        throw new UserInputError("Wrong email adress");
+      if (!validator.isLength(password, { min: 8, max: undefined }))
+        throw new UserInputError("Password must have from 8 to 16 chars");
+
+      password = bcrypt.hashSync(password, 10);
 
       const user = User.create({
         role,
@@ -36,6 +43,8 @@ const userResolver = {
     },
     login: async (_, { email, password }) => {
       //https://www.howtographql.com/graphql-js/6-authentication/
+      if (!validator.isEmail(email))
+        throw new UserInputError("Wrong email adress");
       const user = await User.findOne({ where: { email } });
       if (!user) throw new Error("User not found");
       const resoult = bcrypt.compareSync(password, user.password);
