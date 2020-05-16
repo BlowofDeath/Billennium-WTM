@@ -2,10 +2,9 @@ import { ApolloServer } from "apollo-server";
 import typeDefs from "./typeDefs/typeDefs";
 import resolvers from "./resolvers/resolvers";
 import db from "./configs/database";
-import User from "./models/User";
+import dotenv from "dotenv";
+dotenv.config();
 
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
 async function startServer() {
   await db
     .authenticate()
@@ -16,15 +15,23 @@ async function startServer() {
       console.error("Unable to connect to the database:", err);
     });
 
+  //This makes that tables are dropped on server restart
   await db.sync({ force: true }).then(() => {
     console.log(`Database & tables created!`);
   });
 
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    //This makes that error display only message
+    // formatError: (err) => {
+    //   return err.message;
+    // },
+  });
 
   // The `listen` method launches a web server.
   server.listen().then(({ url }) => {
-    console.log(`🚀  Server ready at ${url}`);
+    console.log(`Server ready at ${url}`);
   });
 }
 

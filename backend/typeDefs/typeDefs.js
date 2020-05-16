@@ -1,28 +1,9 @@
-import { gql } from "apollo-server";
+import { mergeTypes } from "merge-graphql-schemas";
+import userType from "./userType";
 
-const typeDefs = gql`
-  type Query {
-    users: [User]
-  }
+const types = [userType];
 
-  type User {
-    id: ID!
-    role: String!
-    email: String!
-    password: String!
-    first_name: String!
-    last_name: String!
-  }
-
-  type Mutation {
-    user(
-      role: String!
-      email: String!
-      password: String!
-      first_name: String!
-      last_name: String!
-    ): User!
-  }
-`;
-
-export default typeDefs;
+// NOTE: 2nd param is optional, and defaults to false
+// Only use if you have defined the same type multiple times in
+// different files and wish to attempt merging them together.
+export default mergeTypes(types, { all: true });
