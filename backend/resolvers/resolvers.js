@@ -1,26 +1,6 @@
-import User from "../models/User";
+import GMR from "graphql-merge-resolvers";
+import userResolver from "./userResolver";
 
-const resolvers = {
-  Query: {
-    users: async () => {
-      const user = await User.findAll();
-      console.log(user);
-      return user;
-    },
-  },
-  Mutation: {
-    user: (parent, { role, email, password, first_name, last_name }) => {
-      const user = User.create({
-        role,
-        email,
-        password,
-        first_name,
-        last_name,
-      });
-
-      return user;
-    },
-  },
-};
+const resolvers = GMR.merge([userResolver]);
 
 export default resolvers;
