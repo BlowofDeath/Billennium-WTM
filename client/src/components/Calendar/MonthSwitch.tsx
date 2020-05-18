@@ -13,16 +13,16 @@ const _nextMonth = (date: Moment): number => {
 }
 
 const MonthSwitch: FC = () => {
-	const context = useContext(Context);
-	const currentMonth: Moment = moment(context.visableMonth);
+	const { visibleMonth, update } = useContext(Context);
+	const currentMonth: Moment = moment(visibleMonth);
 
 	return (
 		<StyledSwitch>
-			<SwitchButton onClick={() => {context.update({ visableMonth: _previousMonth(currentMonth) })}}>
+			<SwitchButton onClick={() => { update({ visibleMonth: _previousMonth(currentMonth) })}}>
 				<FiChevronLeft size={40}/>
 			</SwitchButton>
 				<DateLabel>{ currentMonth.format("MMMM Y") }</DateLabel>
-			<SwitchButton onClick={() => {context.update({ visableMonth: _nextMonth(currentMonth) })}}>
+			<SwitchButton onClick={() => { update({ visibleMonth: _nextMonth(currentMonth) })}}>
 				<FiChevronRight size={40}/>
 			</SwitchButton>
 		</StyledSwitch>

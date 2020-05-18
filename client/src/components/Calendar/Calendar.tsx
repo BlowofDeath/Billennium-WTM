@@ -1,5 +1,5 @@
 import React, { ReactNode, Component } from 'react';
-import { Context, defaultContextValue } from './Context';
+import { Context, defaultContextValue, Events } from './Context';
 import Main from './Main';
 import MonthSwitch from './MonthSwitch';
 import DayLabel from './DayLabel';
@@ -9,7 +9,11 @@ interface IProps {
 	/** Mark specific day - by default current day */
 	mark?: number,
 	/** Specify which month should be displayed - by default current month */
-	visableMonth?: number
+	visableMonth?: number,
+	/** Specifies events on calendar */
+	events?: Events,
+	/** Event that fires when month is beeing changed */
+	onMonthChange?: (month: Date) => void
 }
 
 class Calendar extends Component<IProps> {
@@ -20,7 +24,8 @@ class Calendar extends Component<IProps> {
 	state = {
 		...defaultContextValue,
 		mark: this.props.mark ?? defaultContextValue.mark,
-		visableMonth: this.props.visableMonth ?? defaultContextValue.visableMonth
+		visibleMonth: this.props.visableMonth ?? defaultContextValue.visibleMonth,
+		events: this.props.events ?? defaultContextValue.events
 	}
 	
 	render(): ReactNode {
