@@ -15,6 +15,7 @@ import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Row from './Row';
+import Table3 from './Row';
 
 
 export default class Table1 extends React.Component {
@@ -45,10 +46,13 @@ export default class Table1 extends React.Component {
         var keys = this.getKeys();
 
         return items.map((row, index)=>{
-            return <TableRow key={index}><RenderRow key={index} data={row} keys={keys}/></TableRow>
+            return <TableRow key={index} onClick={this.toggleRow.bind(this)}><RenderRow key={index} data={row} keys={keys}/></TableRow>
         })
     }
 
+    toggleRow(e) {
+        this.setState({open: !this.state.open});
+    }
 
 
 
@@ -58,7 +62,6 @@ export default class Table1 extends React.Component {
                 <Table aria-label="collapsible table" style={{ }}>
                     <TableHead>
                         <TableRow >
-                            <TableCell></TableCell>
                             {this.getHeader()}
                         </TableRow>
                     </TableHead>
@@ -66,6 +69,9 @@ export default class Table1 extends React.Component {
                         {this.getRowsData()}
                     </TableBody>
                 </Table>
+                <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+                    <Table3/>
+                </Collapse>
             </TableContainer>
         );
 

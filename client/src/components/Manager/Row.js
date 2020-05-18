@@ -14,57 +14,41 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import {ConditionalType as classes} from "typescript";
 
-const useRowStyles = makeStyles({
-    root: {
-        "& > *": {
-            borderBottom: "unset"
-        }
-    }
-});
 
-export default function Row(props) {
-    const [open, setOpen] = React.useState(false);
-    const classes = useRowStyles();
-
-    return (
-        <React.Fragment>
-            <TableRow className={classes.root}>
-                <TableCell>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                </TableCell>
-
-            </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box margin={1}>
-                            <Typography variant="h6" gutterBottom component="div">
-                                History
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Customer</TableCell>
-                                        <TableCell align="right">Amount</TableCell>
-                                        <TableCell align="right">Total price ($)</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
-        </React.Fragment>
-    );
+export default class Table3 extends React.Component {
+    constructor(props){
+    super(props);
+    this.state={
+        open: false
+    };
 }
+
+    render() {
+        return (
+            <React.Fragment>
+                <TableRow>
+                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                            <Box margin={1}>
+                                <Typography variant="h6" gutterBottom component="div">
+                                    History
+                                </Typography>
+                                <Table size="small" aria-label="purchases">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Data</TableCell>
+                                            <TableCell>Ilość godzin</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                    </TableBody>
+                                </Table>
+                            </Box>
+                    </TableCell>
+                </TableRow>
+            </React.Fragment>
+        );
+    }
+}
+

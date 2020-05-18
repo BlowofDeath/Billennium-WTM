@@ -24,9 +24,6 @@ export default class Table2 extends React.Component {
                 {'Imię': 'Cezary', 'Nazwisko': 'Dobreńko', 'Wiek': 15},
                 {'Imię': 'Cezary', 'Nazwisko': 'Dobreńko', 'Wiek': 15},
             ],
-            tableData3:[
-                {'Data': '2020-05-20', 'Ilość': 8},
-            ],
         }
     }
 
