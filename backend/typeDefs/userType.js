@@ -23,6 +23,7 @@ const userType = gql`
       last_name: String!
     ): Auth
     login(email: String!, password: String!): Auth
+    logout(token: String!): String!
   }
 
   type Auth {

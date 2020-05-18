@@ -16,9 +16,9 @@ async function startServer() {
     });
 
   //This makes that tables are dropped on server restart
-  await db.sync({ force: true }).then(() => {
-    console.log(`Database & tables created!`);
-  });
+  // await db.sync({ force: true }).then(() => {
+  //   console.log(`Database & tables created!`);
+  // });
 
   const server = new ApolloServer({
     typeDefs,
