@@ -1,9 +1,13 @@
 import Sequelize from "sequelize";
 import db from "../configs/database";
+import WorkTimeRecord from "./WorkTimeRecord";
 
 const Month = db.define("months", {
-  name: Sequelize.TEXT,
-  isClosed: Sequelize.BOOLEAN
+  month: Sequelize.INTEGER,
+  year: Sequelize.INTEGER,
+  isClosed: Sequelize.BOOLEAN,
 });
+
+Month.hasMany(WorkTimeRecord);
 
 export default Month;
