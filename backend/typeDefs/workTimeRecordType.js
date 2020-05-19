@@ -11,7 +11,13 @@ const workTimeRecordType = gql`
     day: Int!
     from: String!
     to: String!
-    monthId: Month!
+    month: Month!
+    user: User!
+  }
+
+  type Mutation {
+    startWorkTimeRecord(token: String!, projectId: ID!): WorkTimeRecord
+    stopWorkTimeRecord(token: String!): WorkTimeRecord
   }
 `;
 

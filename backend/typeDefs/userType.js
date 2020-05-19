@@ -12,6 +12,7 @@ const userType = gql`
     email: String!
     first_name: String!
     last_name: String!
+    projects: [Project]
   }
 
   type Mutation {

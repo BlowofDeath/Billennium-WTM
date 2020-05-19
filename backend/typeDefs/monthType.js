@@ -11,8 +11,8 @@ const monthType = gql`
     month: Int!
     year: Int!
     isClosed: Boolean!
-    userId: User!
     workTimeRecords: [WorkTimeRecord]
+    user: User!
   }
 `;
 
