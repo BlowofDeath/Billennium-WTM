@@ -15,7 +15,7 @@ async function startServer() {
       console.error("Unable to connect to the database:", err);
     });
 
-  //This makes that tables are dropped on server restart
+  //This makes that tables are dropped and created on server restart
   // await db.sync({ force: true }).then(() => {
   //   console.log(`Database & tables created!`);
   // });

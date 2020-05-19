@@ -1,17 +1,18 @@
 import User from "../models/User";
 import Month from "../models/Month";
 import WorkTimeRecord from "../models/WorkTimeRecord";
+import Project from "../models/Project";
 import bcrypt from "bcrypt";
 import { UserInputError, AuthenticationError } from "apollo-server";
 import validator from "validator";
 import { signJWT, verifyJWT } from "../middleware/jwtTool";
 import moment from "moment";
+import { Op } from "sequelize";
 
 const userResolver = {
   Query: {
     users: async () => {
       const user = await User.findAll();
-      console.log(user);
       return user;
     },
     user: async (_, { email }) => {
@@ -19,6 +20,23 @@ const userResolver = {
         throw new UserInputError("Wrong email adress");
       const user = await User.findOne({ where: { email } });
       return user;
+    },
+  },
+  User: {
+    projects: async ({ id }, args) => {
+      const months = await Month.findAll({ where: { userId: id } });
+      const monthQuery = [];
+      months.forEach((value) => {
+        monthQuery.push({ monthId: value.id });
+      });
+      const wtr = await WorkTimeRecord.findAll({
+        where: { [Op.or]: monthQuery },
+      });
+      const wtrQuery = [];
+      wtr.forEach((value) => {
+        wtrQuery.push({ id: value.projectId });
+      });
+      return await Project.findAll({ where: { [Op.or]: wtrQuery } });
     },
   },
   Mutation: {
@@ -31,7 +49,6 @@ const userResolver = {
         },
         order: [["createdAt", "DESC"]],
       });
-      console.log(month.id);
 
       const wtr = await WorkTimeRecord.findOne({
         where: {
@@ -56,7 +73,7 @@ const userResolver = {
 
       password = bcrypt.hashSync(password, 10);
 
-      const user = User.create({
+      const user = await User.create({
         role,
         email,
         password,
@@ -78,35 +95,6 @@ const userResolver = {
       if (!resoult) throw new UserInputError("Password incorrect");
 
       const token = signJWT(user.id);
-
-      //Starting count time
-      const month = moment().format("M");
-      const year = moment().format("Y");
-      const day = moment().format("D");
-      const now = moment().valueOf();
-      let monthExist = await Month.findOne({
-        where: { month, userId: user.id },
-      });
-      if (!monthExist) {
-        monthExist = await Month.create({
-          month,
-          year,
-          isClosed: false,
-          userId: user.id,
-        });
-      }
-
-      const workTimeRecord = await WorkTimeRecord.findOne({
-        where: { day, monthId: monthExist.id },
-      });
-      if (!workTimeRecord) {
-        WorkTimeRecord.create({
-          day,
-          from: now,
-          to: null,
-          monthId: monthExist.id,
-        });
-      }
 
       return { token, user };
     },
