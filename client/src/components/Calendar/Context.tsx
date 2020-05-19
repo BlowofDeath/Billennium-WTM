@@ -1,6 +1,7 @@
 import { createContext, ReactNode } from "react";
+import moment from 'moment';
 
-export interface Event {
+export interface CalendarEvent {
 	/** Title of the event */
 	title: string,
 	/** Event description if given */
@@ -9,30 +10,37 @@ export interface Event {
 	date: number
 }
 
-export interface RenderableEvent {
+export interface CalendarRenderableEvent {
 	/** Optional custom render method */
-	render?: () => ReactNode,
+	render: (index: number, date: number) => ReactNode,
 	date: number
 }
 
-export interface Events {
-	[key: number]: Array<Event | RenderableEvent>
+// export interface Events {
+// 	[key: number]: Array<Event | RenderableEvent>
+// }
+
+export function isRenderableEvent(event: CalendarEvent | CalendarRenderableEvent): event is CalendarRenderableEvent {
+	return (event as CalendarRenderableEvent).render !== undefined;
 }
 
 export interface CalendarContext {
 	/** Date type - Defines which day should be marked - Date.now() by default */
 	mark: number,
+	/**  */
+	year: number,
 	/** Date type - Defines which month should be displayed - Date.now() by default */
-	visibleMonth: number,
+	month: number,
 	/** Events that should be put on specific date */
-	events: Events,
+	events: Array<CalendarRenderableEvent | CalendarEvent>,
 	/** Updater function */
 	update: (state: object) => void
 }
 
 export const defaultContextValue: CalendarContext = {
 	mark: 			Date.now(),
-	visibleMonth: 	Date.now(),
+	year: 			moment().year(),
+	month: 			moment().month(),
 	events: 		[],
 	update: 		function() {}
 }
