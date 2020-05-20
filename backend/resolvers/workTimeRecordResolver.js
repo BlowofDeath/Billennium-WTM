@@ -5,6 +5,7 @@ import validator from "validator";
 import moment from "moment";
 import { verifyJWT } from "../middleware/jwtTool";
 import User from "../models/User";
+import Project from "../models/Project";
 
 const workTimeRecordResolver = {
   Query: {
@@ -109,6 +110,9 @@ const workTimeRecordResolver = {
     },
     month: async ({ monthId }, args) => {
       return await Month.findOne({ where: { id: monthId } });
+    },
+    project: async ({ projectId }, args) => {
+      return await Project.findOne({ where: { id: projectId } });
     },
   },
 };
