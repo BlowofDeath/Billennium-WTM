@@ -15,7 +15,7 @@ const monthResolver = {
     },
   },
   Month: {
-    userId: async ({ userId }, args) => {
+    user: async ({ userId }, args) => {
       return await User.findOne({ where: { id: userId } });
     },
     workTimeRecords: async ({ id }, args) => {
