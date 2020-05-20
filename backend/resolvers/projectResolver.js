@@ -13,6 +13,11 @@ const projectResolver = {
     project: async (_, { id }) => {
       return await Project.findOne({ where: { id } });
     },
+    projects: async (_, { isClosed }) => {
+      if (typeof isClosed !== "undefined")
+        return await Project.findAll({ where: { isClosed } });
+      return await Project.findAll();
+    },
   },
   Mutation: {
     addProject: async (_, { name, description }) => {

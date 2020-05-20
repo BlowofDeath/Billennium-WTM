@@ -3,6 +3,7 @@ import { gql } from "apollo-server";
 const projectType = gql`
   type Query {
     project(id: ID!): Project!
+    projects(isClosed: Boolean): [Project]
   }
 
   type Project {

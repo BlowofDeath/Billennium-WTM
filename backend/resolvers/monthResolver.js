@@ -13,6 +13,12 @@ const monthResolver = {
       //zwraca work time z każdego miesiąca dla wszystkich userów
       return await Month.findAll({ where: { month, year } });
     },
+    monthsForAllUsersByYear: async (_, { year }) => {
+      return await Month.findAll({ where: { year } });
+    },
+    monthsForUserByYear: async (_, { userId, year }) => {
+      return await Month.findAll({ where: { year, userId } });
+    },
   },
   Month: {
     user: async ({ userId }, args) => {
