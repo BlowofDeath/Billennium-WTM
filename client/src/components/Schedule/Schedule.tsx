@@ -1,10 +1,14 @@
-import React, { FC, useState, useEffect } from 'react';
-import moment from 'moment';
+import React, { FC, useState, useEffect, useContext } from 'react';
+import moment, { Moment } from 'moment';
 import Calendar from '../Calendar/Calendar';
 import { CalendarRenderableEvent, CalendarEvent } from '../Calendar/Context';
+import { Context } from '../App/Context';
 import { EventBlock } from './Atoms';
 import { useLocation, useHistory } from 'react-router-dom';
 import { parse } from 'query-string';
+import { useQuery } from '@apollo/react-hooks';
+import { UserScheduleQuery } from '../../queries';
+import { gql } from 'apollo-boost';
 
 // day - number 1 - 31
 const json = {
@@ -15,6 +19,11 @@ const json = {
 			day: 1,
 			od: "8:00",
 			do: "16:00"
+		},
+		{
+			day: 1,
+			od: "16:00",
+			do: "20:00"
 		},
 		{
 			day: 2,
@@ -65,14 +74,26 @@ const json = {
 }
 
 const Schedule: FC = () => {
+	const { token } = useContext(Context);
 	const history = useHistory();
 	const { search } = useLocation();
+
 	const query = parse(search, { parseNumbers: true });
 	const queryTime = moment([query.year as number, query.month as number]);
 	const displayTime = queryTime.isValid() ? queryTime : moment();
 
-	const [year, setYear] = useState(displayTime.year());
-	const [month, setMonth] = useState(displayTime.month());
+	const [year, setYear] = useState<number>(displayTime.year());
+	const [month, setMonth] = useState<number>(displayTime.month());
+
+	const { data, error, loading, refetch } = useQuery(UserScheduleQuery, {
+		variables: {
+			token,
+			month: month + 1,
+			year
+		}
+	});
+
+	refetch();
 
 	useEffect(() => {
 		if (queryTime.isValid())
@@ -85,23 +106,42 @@ const Schedule: FC = () => {
 		}
 	}, [query.month]);
 
+	if (loading)
+		return <div>Loading...</div>;
+
+	if (error)
+		return <div>Error...</div>;
+
 	// Convert data
-	const events: Array<CalendarEvent | CalendarRenderableEvent> = json.allTimeRecords.map((record: any) => {
+	const events: Array<CalendarEvent | CalendarRenderableEvent> = data?.month?.workTimeRecords.map((record: any) => {
+		let wtrFrom: Moment = moment(parseInt(record.from));
+		let wtrTo: Moment = moment(parseInt(record.to ?? Date.now()));
+
 		let ev: CalendarRenderableEvent = {
-			render: (index: number, date: number) => <EventBlock key={index}>{ record.od } - { record.do }</EventBlock>,
-			date: moment([json.year, json.month, record.day]).valueOf()
+			render: (index: number, date: number) => (
+				<EventBlock key={index}>
+					{ wtrFrom.format("HH:mm") } - { wtrTo.format("HH:mm") }<br/>
+					
+				</EventBlock>
+			),
+			date: moment([wtrFrom.year(), wtrFrom.month(), record.day]).valueOf()
 		}
 		return ev;
-	})
+	});
 
 	return (
 		<div>
-			<Calendar events={events} year={year} month={month} onMonthChange={(year, month) => {
+			<Calendar
+				timeline
+				events={events}
+				year={year}
+				month={month}
+				onMonthChange={(year, month) => {
 					history.push(`/schedule?year=${year}&month=${month}`);
 				}}>
 				<Calendar.MonthSwitch />
 				<Calendar.DayLabel />
-				<Calendar.Main />
+				<Calendar.Board/>
 			</Calendar>
 		</div>
 	)

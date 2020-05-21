@@ -1,15 +1,17 @@
 import styled from 'styled-components';
 
 export const EventBlock = styled.div`
-	width: 98%;
+	white-space: nowrap;
+	width: min-content;
 	height: 85%;
-	padding: 3px;
+	padding: 5px 10px;
 	background: lightgreen;
 	border-radius: 4px;
 	display: flex;
+	flex-wrap: nowrap;
 	align-items: center;
 	justify-content: center;
-	margin: 0 auto;
+	margin: 0 10px;
 	user-select: none;
 
 	&:hover {

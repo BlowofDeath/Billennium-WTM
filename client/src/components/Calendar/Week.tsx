@@ -3,15 +3,20 @@ import moment, { Moment } from 'moment';
 import Day from './Day';
 import { StyledWeek } from './Atoms';
 import { CalendarRenderableEvent, CalendarEvent } from './Context';
+import { CSSProperties } from '@material-ui/core/styles/withStyles';
 
 interface IProps {
 	start: Moment,
-	month?: Moment,
-	events: Array<CalendarEvent | CalendarRenderableEvent>
+	month: number,
+	events: Array<CalendarEvent | CalendarRenderableEvent>,
+	style?: CSSProperties,
+	timeline: boolean
 }
 
-const Week: FC<IProps> = ({ start, month = moment(), events }) => {
+const Week: FC<IProps> = ({ start, month, events, timeline, style }) => {
 	let days: Array<ReactNode> = [];
+
+	const monthMoment: Moment = moment(month);
 	const from: Moment 	= start.clone().subtract(1, "day");
 	const to: Moment 	= start.clone().add(7, "days");
 
@@ -22,19 +27,24 @@ const Week: FC<IProps> = ({ start, month = moment(), events }) => {
 			return it.isSame(moment(value.date), "day");
 		});
 
-		days.push(<Day key={ it.toString() } events={dayEvents} label={it.get("date")}/>);
+		if (!timeline || (timeline && it.isSame(monthMoment, "month")))
+			days.push(<Day key={ it.toString() } events={dayEvents} date={it.valueOf()} timeline={timeline}/>);
+
+		
 		it.add(1, "day");
 	}
 
 	return (
-		<StyledWeek>
+		<StyledWeek timeline={timeline} style={{ ...style }}>
 			{ days }
 		</StyledWeek>
 	)
 }
 
 Week.defaultProps = {
-	events: []
+	events: [],
+	style: {},
+	timeline: false
 }
 
 export default Week;

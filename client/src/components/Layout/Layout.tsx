@@ -1,7 +1,11 @@
-import React, { ReactNode, FC } from 'react';
+import React, { ReactNode, FC, useContext, Fragment } from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Grid, Hidden } from '@material-ui/core';
 import { Sidebar, Container } from './Atoms';
+import LoginPage from '../LoginPage/LoginPage';
+import { useToken } from '../../hooks/useToken';
+import { AUTH_TOKEN } from '../../constants';
+import { Context } from '../App/Context';
 
 interface IProps {
 	/** Menu component that displays at the side */
@@ -10,30 +14,36 @@ interface IProps {
 	main?: 		ReactNode
 }
 
-// Mock login page
-const Login = () => <h2>Login</h2>;
-
 /** Layout component */
 const Layout: FC<IProps> = ({ sidenav, main }) => {
-	const token = 'mockToken';
+	const { token } = useContext(Context);
 	const isAuthenticated = typeof token === 'string' && token !== null;
-	
+
 	return (
 		<BrowserRouter>
-			<Route path="/login" exact component={Login}/>
-			{ !isAuthenticated && <Redirect to="/login"/> }
-			{ isAuthenticated && <Container container alignItems="stretch" alignContent="stretch">
-				<Hidden smDown>
-					<Grid item md={3} lg={2} xl={2}>
-						<Sidebar>
-							{ sidenav }
-						</Sidebar>
-					</Grid>
-				</Hidden>
-				<Grid item xs={12} sm={12} md={9} lg={10} xl={10}>
-					{ main }
-				</Grid>
-			</Container>
+			{ !isAuthenticated && <Fragment>
+				<Route path="/login" exact component={LoginPage}/>
+				<Redirect to="/login"/>
+			</Fragment>
+			}
+			{ isAuthenticated && <Fragment>
+				<Route to="/">
+					<Container container alignItems="stretch" alignContent="stretch">
+						<Hidden smDown>
+							<Grid item md={3} lg={2} xl={2}>
+								<Sidebar>
+									{ sidenav }
+								</Sidebar>
+							</Grid>
+						</Hidden>
+						<Grid item xs={12} sm={12} md={9} lg={10} xl={10}>
+							<div style={{ maxHeight: "100vh", overflowY: "scroll" }}>
+								{ main }
+							</div>
+						</Grid>
+					</Container>
+				</Route>
+			</Fragment>
 			}
 		</BrowserRouter>
 	)

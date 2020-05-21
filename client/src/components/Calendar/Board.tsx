@@ -3,8 +3,8 @@ import moment, { Moment } from 'moment';
 import { Context, CalendarRenderableEvent, CalendarEvent } from './Context';
 import Week from './Week';
 
-const Main: FC = () => {
-	const { events, month, year} = useContext(Context);
+const Board: FC = () => {
+	const { events, month, year, timeline } = useContext(Context);
 	const currentPage: Moment = moment([year, month]);
 
 	const weeks: Array<React.ReactNode> = [];
@@ -21,16 +21,11 @@ const Main: FC = () => {
 			return moment(event.date).isBetween(i.clone().subtract(1, "day"), i.clone().add(7, "day"));
 		});
 
-		weeks.push(<Week key={it.toString()} start={it.clone()} events={weekEvents}/>);
+		weeks.push(<Week key={it.toString()} month={moment([year, month]).valueOf()} start={it.clone()} events={weekEvents} timeline={timeline}/>);
 		it = it.clone().add(7, "day");
 	}
 
 	return <div>{ weeks }</div>;
 }
 
-Main.defaultProps = {
-	today: Date.now(),
-	month: Date.now()
-}
-
-export default Main;
+export default Board;

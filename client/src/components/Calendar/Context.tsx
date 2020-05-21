@@ -16,10 +16,6 @@ export interface CalendarRenderableEvent {
 	date: number
 }
 
-// export interface Events {
-// 	[key: number]: Array<Event | RenderableEvent>
-// }
-
 export function isRenderableEvent(event: CalendarEvent | CalendarRenderableEvent): event is CalendarRenderableEvent {
 	return (event as CalendarRenderableEvent).render !== undefined;
 }
@@ -33,6 +29,8 @@ export interface CalendarContext {
 	month: number,
 	/** Events that should be put on specific date */
 	events: Array<CalendarRenderableEvent | CalendarEvent>,
+	/**  */
+	timeline: boolean,
 	/** Updater function */
 	update: (state: object) => void
 }
@@ -42,6 +40,7 @@ export const defaultContextValue: CalendarContext = {
 	year: 			moment().year(),
 	month: 			moment().month(),
 	events: 		[],
+	timeline: 		false,
 	update: 		function() {}
 }
 

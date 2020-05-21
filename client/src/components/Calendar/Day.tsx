@@ -1,16 +1,27 @@
 import React, { FC } from 'react';
+import moment, { Moment } from 'moment';
 import { StyledDay, StyledDayNumber } from './Atoms';
 import { CalendarEvent, CalendarRenderableEvent, isRenderableEvent } from './Context';
 
 interface IProps {
-	label: any,
-	events: Array<CalendarEvent | CalendarRenderableEvent>
+	date: number,
+	events: Array<CalendarEvent | CalendarRenderableEvent>,
+	timeline: boolean
 }
 
-const Day: FC<IProps> = ({ label, events }) => {
+const Day: FC<IProps> = ({ date, events, timeline }) => {
+	const day = moment(date);
+
 	return (
-		<StyledDay>
-			<StyledDayNumber>{ label }</StyledDayNumber>
+		<StyledDay timeline={timeline}>
+			<StyledDayNumber timeline={timeline}>
+				<span>
+					{ day.format('DD') }
+				</span>
+				<span>
+					{ timeline && day.format('ddd') }
+				</span>
+			</StyledDayNumber>
 			{
 				events.map((event: CalendarEvent | CalendarRenderableEvent, index: number) => {
 					if (isRenderableEvent(event)) {
@@ -24,7 +35,8 @@ const Day: FC<IProps> = ({ label, events }) => {
 }
 
 Day.defaultProps = {
-	events: []
+	events: [],
+	timeline: false
 }
 
 export default Day;

@@ -4,6 +4,7 @@ import { StyledDayLabel, StyledList } from './Atoms';
 
 const DayLabel: FC = () => {
 	const days: Array<ReactNode> = [];
+
 	const from: Moment = moment().day("Monday").subtract(1, "day");
 	
 	const it: Moment = moment().day("Monday");
