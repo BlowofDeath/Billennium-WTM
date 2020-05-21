@@ -97,11 +97,26 @@ const workTimeRecordResolver = {
       if (wtr.to != null) return null;
       const now = moment().valueOf();
       wtr.to = now;
+      if (wtr.from + 300000 >= now) {
+        await wtr.save();
+        return wtr;
+      } else {
+        WorkTimeRecord.destroy({ where: { id: wtr.id } });
+        return null;
+      }
+    },
+    updateWorkTimeRecord: async (_, { token, id, day, from, to }) => {
+      const wtr = await WorkTimeRecord.findOne({ where: { id } });
+      if (!wtr) throw new UserInputError("Work Time Record is not exist");
+      (wtr.day = day), (wtr.from = from), (wtr.to = to);
       await wtr.save();
       return wtr;
     },
-    //updateWorkTimeRecord(jwt, day, from, to)
-    //removeWorkTimeRecord(jwt, day) nie na zamkniętym miesiącu i jesli user jest właścicielem
+    removeWorkTimeRecord: async (_, { token, id }) => {
+      const destroyed = WorkTimeRecord.destroy({ where: { id: wtr.id } });
+      if (!destroyed) throw new UserInputError("Work Time Record is not exist");
+      return null;
+    },
   },
   WorkTimeRecord: {
     user: async ({ monthId }, args) => {

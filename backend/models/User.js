@@ -8,6 +8,8 @@ const User = db.define("users", {
   first_name: Sequelize.STRING,
   last_name: Sequelize.STRING,
   role: Sequelize.STRING,
+  salary: Sequelize.FLOAT,
+  isActive: Sequelize.BOOLEAN,
 });
 
 User.hasMany(Month);

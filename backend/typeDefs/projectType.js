@@ -13,6 +13,7 @@ const projectType = gql`
     isClosed: Boolean!
     workTimeRecords: [WorkTimeRecord]
     users: [User]
+    wtrsPerMonth(month: Int!, year: Int!): [WorkTimeRecord]
   }
 
   type Mutation {
