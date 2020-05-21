@@ -79,6 +79,8 @@ const userResolver = {
         password,
         first_name,
         last_name,
+        salary: null,
+        isActive: true,
       });
 
       const token = signJWT(user.id);
@@ -97,6 +99,27 @@ const userResolver = {
       const token = signJWT(user.id);
 
       return { token, user };
+    },
+    updateUser: async (
+      _,
+      { token, id, email, first_name, last_name, salary, isActive }
+    ) => {
+      const { userId } = verifyJWT(token);
+      if (!userId) throw new AuthenticationError("Incorrect token");
+      const user = await User.findOne({ where: { id: userId } });
+      if (!user) throw new Error("User not found");
+      const userUpdate = await User.findOne({ where: { id } });
+      if (!user) throw new Error("User not found");
+      if (!validator.isEmail(email))
+        throw new UserInputError("Wrong email adress");
+
+      userUpdate.email = email;
+      userUpdate.first_name = first_name;
+      userUpdate.last_name = last_name;
+      userUpdate.salary = salary;
+      userUpdate.isActive = isActive;
+      await userUpdate.save();
+      return userUpdate;
     },
   },
 };

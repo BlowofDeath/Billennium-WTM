@@ -61,6 +61,22 @@ const projectResolver = {
       });
       return await User.findAll({ where: { [Op.or]: users } });
     },
+    wtrsPerMonth: async ({ id }, { month, year }) => {
+      const wtr = await WorkTimeRecord.findAll({ where: { projectId: id } });
+      const monthsQuery = [];
+      wtr.forEach((value) => {
+        monthsQuery.push({ id: value.monthId });
+      });
+      const months = await Month.findAll({
+        where: { month, year, [Op.or]: monthsQuery },
+      });
+      const wtrQuery = [];
+      months.forEach((value) => {
+        wtrQuery.push({ monthId: value.id });
+      });
+
+      return await WorkTimeRecord.findAll({ where: { [Op.or]: wtrQuery } });
+    },
   },
 };
 
