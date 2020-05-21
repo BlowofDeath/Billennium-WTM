@@ -7,7 +7,7 @@ import { UserProjectsQuery } from '../../queries';
 import { StartTimeRecordingMutation, StopTimeRecordingMutation } from '../../mutations';
 import { TASK } from '../../constants';
 
-const Project: FC = () => {
+const Projects: FC = () => {
 	const { token, task, update } = useContext(Context);
 	const { data, loading, error } = useQuery(UserProjectsQuery);
 	
@@ -36,6 +36,11 @@ const Project: FC = () => {
 		if (startResult.data)
 			localStorage.setItem(TASK, JSON.stringify(task));
 	}, [startResult.data]);
+
+	useEffect(() => {
+		if (stopResult.data)
+			localStorage.removeItem(TASK);
+	}, [stopResult.data]);
 
 	if (loading)
 		return <span>Loading...</span>;
@@ -80,4 +85,4 @@ const Project: FC = () => {
 	)
 }
 
-export default Project;
+export default Projects;

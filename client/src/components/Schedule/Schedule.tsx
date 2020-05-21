@@ -121,7 +121,7 @@ const Schedule: FC = () => {
 			render: (index: number, date: number) => (
 				<EventBlock key={index}>
 					{ wtrFrom.format("HH:mm") } - { wtrTo.format("HH:mm") }<br/>
-					
+					{ record.project.name }
 				</EventBlock>
 			),
 			date: moment([wtrFrom.year(), wtrFrom.month(), record.day]).valueOf()

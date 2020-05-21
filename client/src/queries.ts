@@ -6,7 +6,10 @@ export const UserScheduleQuery = gql`
 			workTimeRecords {
 				from,
 				to,
-				day
+				day,
+				project {
+					name
+				}
 			}
 		}
 	}
@@ -18,6 +21,29 @@ export const UserProjectsQuery = gql`
 			name,
 			description,
 			id
+		}
+	}
+`;
+
+export const ManagerProjectsQuery = gql`
+	query ManagerProjectsQuery {
+		projects {
+			name, description, id,
+			workTimeRecords {
+				from, to
+			}
+		}
+	}
+`;
+
+export const AdminUsersQuery = gql`
+	query AdminUsersQuery {
+		users {
+			first_name,
+			last_name,
+			email,
+			id,
+			role
 		}
 	}
 `;

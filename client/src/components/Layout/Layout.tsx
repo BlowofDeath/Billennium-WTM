@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Grid, Hidden } from '@material-ui/core';
 import { Sidebar, Container } from './Atoms';
 import LoginPage from '../LoginPage/LoginPage';
-import { useToken } from '../../hooks/useToken';
+import Page from '../Page/Page';
 import { AUTH_TOKEN } from '../../constants';
 import { Context } from '../App/Context';
 
@@ -37,9 +37,9 @@ const Layout: FC<IProps> = ({ sidenav, main }) => {
 							</Grid>
 						</Hidden>
 						<Grid item xs={12} sm={12} md={9} lg={10} xl={10}>
-							<div style={{ maxHeight: "100vh", overflowY: "scroll" }}>
+							<Page>
 								{ main }
-							</div>
+							</Page>
 						</Grid>
 					</Container>
 				</Route>

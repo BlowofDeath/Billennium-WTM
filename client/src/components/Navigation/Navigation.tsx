@@ -1,5 +1,5 @@
 import React, { StatelessComponent, Fragment, useContext } from 'react';
-import { FaHome, FaCalendarAlt } from 'react-icons/fa';
+import { FaHome, FaCalendarAlt, FaUsers } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import { AiOutlineBarChart } from 'react-icons/ai';
 import { useHistory } from 'react-router-dom';
@@ -25,6 +25,12 @@ const items: Array<MenuItem> = [
 		Icon: FaHome
 	},
 	{
+		name: "Użytkownicy",
+		to: '/users',
+		Icon: FaUsers,
+		if: (context: ContextType) => context.user?.role === 'Admin'
+	},
+	{
 		name: "Projekty",
 		to: "/projects",
 		if: (context: ContextType) => context.user?.role === 'Kierownik',
@@ -33,6 +39,7 @@ const items: Array<MenuItem> = [
 	{
 		name: 'Grafik',
 		to: '/schedule',
+		if: (context: ContextType) => context.user?.role === 'Pracownik',
 		Icon: FaCalendarAlt
 	},
 	{
