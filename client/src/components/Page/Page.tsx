@@ -21,9 +21,6 @@ Page.defaultProps = {
 }
 
 export default styled(Page)({
-	height: "100vh",
 	width: "100%",
-	overflowY: "scroll",
 	padding: "10px",
-	background: "RGB(240,242,245)"
 })

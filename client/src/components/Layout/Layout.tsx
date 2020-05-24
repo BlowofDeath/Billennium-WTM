@@ -1,10 +1,11 @@
 import React, { ReactNode, FC, useContext, Fragment } from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { Grid, Hidden } from '@material-ui/core';
-import { Sidebar, Container } from './Atoms';
+import { Grid } from '@material-ui/core';
+import { FiMenu } from 'react-icons/fi';
+import { Sidebar, Container, StyledAppBar, ContentContainer } from './Atoms';
 import LoginPage from '../LoginPage/LoginPage';
+import Drawer from '../Drawer';
 import Page from '../Page/Page';
-import { AUTH_TOKEN } from '../../constants';
 import { Context } from '../App/Context';
 
 interface IProps {
@@ -29,18 +30,21 @@ const Layout: FC<IProps> = ({ sidenav, main }) => {
 			{ isAuthenticated && <Fragment>
 				<Route to="/">
 					<Container container alignItems="stretch" alignContent="stretch">
-						<Hidden smDown>
-							<Grid item md={3} lg={2} xl={2}>
-								<Sidebar>
-									{ sidenav }
-								</Sidebar>
-							</Grid>
-						</Hidden>
-						<Grid item xs={12} sm={12} md={9} lg={10} xl={10}>
+						<Drawer>
+							<Sidebar>
+								{ sidenav }
+							</Sidebar>
+						</Drawer>
+
+						<ContentContainer>
+							<StyledAppBar position="absolute">
+								<FiMenu size={30}/>
+								AppBar
+							</StyledAppBar>
 							<Page>
 								{ main }
 							</Page>
-						</Grid>
+						</ContentContainer>
 					</Container>
 				</Route>
 			</Fragment>

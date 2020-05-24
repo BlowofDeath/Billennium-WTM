@@ -13,17 +13,19 @@ export interface ITask {
 }
 
 export interface ContextType {
-	token: 	string | null,
-	user: 	IUser | null,
-	task: 	ITask | null,
-	update: (state: object) => void
+	token: 				string | null,
+	user: 				IUser | null,
+	task: 				ITask | null,
+	isSidebarVisible: 	boolean,
+	update: 			(state: object) => void
 }
 
 export const defaultContextValue = {
-	token: 	null,
-	user: 	null,
-	task: 	null,
-	update: function() {}
+	token: 				null,
+	user: 				null,
+	task: 				null,
+	isSidebarVisible: 	true,
+	update: 			function() {}
 }
 
 export const Context = createContext<ContextType>(defaultContextValue);

@@ -1,14 +1,14 @@
 import React, { FC, useState, useEffect, SyntheticEvent, useContext } from 'react';
-import validate from 'validate.js';
-import { useMutation } from '@apollo/react-hooks';
-import { TextField, InputAdornment, Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
+import { InputAdornment, Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 import { StyledLoginPage, StyledLoginForm, StyledFormHeader, StyledButton } from './Atoms';
 import { useHistory } from 'react-router-dom';
 import { FiMail, FiKey } from 'react-icons/fi'
-import { loginMutation } from '../../mutations';
 import { AUTH_TOKEN, USER } from '../../constants';
 import { Context } from '../App/Context';
+import EmailField from '../EmailField';
+import PasswordField from '../PasswordField/PasswordField';
+import { useLogin } from './useLogin';
 
 const textFieldStyles = {
 	width: "100%",
@@ -18,60 +18,30 @@ const textFieldStyles = {
 const LoginPage: FC = () => {
 	const context = useContext(Context);
 	const history = useHistory();
-	const [login, { error }] = useMutation(loginMutation);
-	const [loading, setLoading] = useState(false);
 	const [email, setEmail] = useState<string | null>(null);
 	const [password, setPassword] = useState<string | null>(null);
-	const [emailError, setEmailError] = useState<string | null>(null);
-	const [passwordError, setPasswordError] = useState<string | null>(null);
+	const { login, data, loading, error } = useLogin();
 
 	useEffect(() => {
-		// Validate email
-		let errors = validate({ Email: email }, { Email: { email: true }});
-		if (errors?.Email.length > 0)
-			setEmailError("Email jest niepoprawny!");
-		else
-			setEmailError(null);
-	}, [email]);
+		if (!data || context?.user)
+			return;
+
+		localStorage.setItem(AUTH_TOKEN, data.token);
+		localStorage.setItem(USER, JSON.stringify({ ...data.login.user }));
+		history.push('/');
+		context.update({ token: data.login.token, user: { ...data.login.user } });
+	}, [data]);
 
 	useEffect(() => {
-		// validate password
-		let errors = validate({ "Hasło": password }, { "Hasło": {
-			length: {
-				minimum: 8,
-				maximum: 20,
-				tooShort: "jest zbyt krótkie!",
-				tooLong: "jest zbyt długie!"
-			}
-		}})
-		if (errors?.["Hasło"].length > 0)
-			setPasswordError(errors?.["Hasło"][0]);
-		else
-			setPasswordError(null);
-	}, [password]);
+		console.log(error);
+	}, [error]);
 
 	const _confirm = (e: SyntheticEvent<HTMLFormElement>) => {
-		if (emailError || passwordError)
-			return;
 		e.preventDefault();
-		setLoading(true);
+		if (!email || !password)
+			return;
 		
-		login({ variables: { email, password }})
-		.then(({ data: { login }}: any) => {
-			setTimeout(() => {
-				setLoading(false);
-				localStorage.setItem(AUTH_TOKEN, login.token);
-				localStorage.setItem(USER, JSON.stringify({ ...login.user }));
-				history.push('/');
-				context.update({ token: login.token, user: { ...login.user } });
-			}, 2000);
-		})
-		.catch(err => {
-			setTimeout(() => {
-				setLoading(false);
-				console.log('LOGIN ERROR', { err })
-			}, 2000);
-		});
+		login(email, password);
 	}
 
 	return (
@@ -88,29 +58,33 @@ const LoginPage: FC = () => {
 				</Backdrop>
 				<div style={{ flex: 1, flexDirection: "column" }}>
 					<StyledFormHeader>Login</StyledFormHeader>
-					<TextField
-						error={(emailError ? true : false)}
-						helperText={emailError}
-						onChange={(event) => { setEmail(event.target.value) }}
-						type="email"
-						label="Email" style={{ ...textFieldStyles }}
+					
+					<EmailField
+						label="Email"
+						style={{ ...textFieldStyles }}
+						onEmail={(email: string | null) => { setEmail(email) }}
+						helperText="Nieprawidlowy adres email!"
 						InputProps={{ startAdornment: (
 							<InputAdornment position="start">
 								<FiMail size={20}/>
 							</InputAdornment>
 						) }}/>
-					<TextField
-						error={(passwordError ? true : false)}
-						helperText={passwordError}
-						onChange={(event) => { setPassword(event.target.value) }}
+					
+					<PasswordField
+						onPassword={(password: string | null) => { setPassword(password) }}
+						helpText={{
+							tooShort: "jest za krótkie!",
+							tooLong: "jest za długie!"
+						}}
 						label="Hasło"
+						propName="Hasło"
 						type="password"
 						style={{ ...textFieldStyles }}
 						InputProps={{ startAdornment: (
-						<InputAdornment position="start">
-							<FiKey size={20}/>
-						</InputAdornment>
-					) }}/>
+							<InputAdornment position="start">
+								<FiKey size={20}/>
+							</InputAdornment>) }}
+						/>
 				</div>
 
 				<StyledButton variant="contained" color="primary" type="submit">Login!</StyledButton>
