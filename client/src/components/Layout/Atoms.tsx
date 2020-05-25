@@ -30,16 +30,16 @@ export const ContentContainer = styled('div')({
 	maxHeight: "100vh",
 	width: "100%",
 
-	['@media (max-width: 600px)']: {
+	'@media (max-width: 600px)': {
 		width: "100%"
 	},
-	['@media (min-width: 600px) and (max-width: 960px)']: {
+	'@media (min-width: 600px) and (max-width: 960px)': {
 		width: "70vw"
 	},
-	['@media (min-width: 960px) and (max-width: 1280px)']: {
+	'@media (min-width: 960px) and (max-width: 1280px)': {
 		width: "75vw"
 	},
-	['@media (min-width: 1280px) and (max-width: 1920px)']: {
+	'@media (min-width: 1280px) and (max-width: 1920px)': {
 		width: "80vw"
 	}
 })

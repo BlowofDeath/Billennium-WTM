@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { StyledDay, StyledDayNumber } from './Atoms';
 import { CalendarEvent, CalendarRenderableEvent, isRenderableEvent } from './Context';
 

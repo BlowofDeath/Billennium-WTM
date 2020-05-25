@@ -10,7 +10,7 @@ interface EmailFieldProps {
 }
 
 const EmailField: FC<EmailFieldProps & TextFieldProps> = ({ onEmail, helperText, ...props }) => {
-	const [email, setEmail] = useState<string | null>(null);
+	const [,setEmail] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
 	const _handleChange = (event: SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>) => {

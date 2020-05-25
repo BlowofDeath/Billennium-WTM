@@ -1,6 +1,5 @@
 import React, { ReactNode, FC, useContext, Fragment } from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { Grid } from '@material-ui/core';
 import { FiMenu } from 'react-icons/fi';
 import { Sidebar, Container, StyledAppBar, ContentContainer } from './Atoms';
 import LoginPage from '../LoginPage/LoginPage';

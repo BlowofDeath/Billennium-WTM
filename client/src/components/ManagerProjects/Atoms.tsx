@@ -1,4 +1,3 @@
-import { Button } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 
 export const StyledProjectContainer = styled('div')({

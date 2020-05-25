@@ -8,70 +8,6 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { parse } from 'query-string';
 import { useQuery } from '@apollo/react-hooks';
 import { UserScheduleQuery } from '../../queries';
-import { gql } from 'apollo-boost';
-
-// day - number 1 - 31
-const json = {
-	year: 2020,
-	month: 4,
-	allTimeRecords: [
-		{
-			day: 1,
-			od: "8:00",
-			do: "16:00"
-		},
-		{
-			day: 1,
-			od: "16:00",
-			do: "20:00"
-		},
-		{
-			day: 2,
-			od: "10:00",
-			do: "15:00"
-		},
-		{
-			day: 3,
-			od: "10:00",
-			do: "15:00"
-		},
-		{
-			day: 4,
-			od: "10:00",
-			do: "15:00"
-		},
-		{
-			day: 5,
-			od: "10:00",
-			do: "15:00"
-		},
-		{
-			day: 6,
-			od: "10:00",
-			do: "15:00"
-		},
-		{
-			day: 7,
-			od: "10:00",
-			do: "15:00"
-		},
-		{
-			day: 8,
-			od: "10:00",
-			do: "15:00"
-		},
-		{
-			day: 30,
-			od: "10:00",
-			do: "15:00"
-		},
-		{
-			day: 31,
-			od: "10:00",
-			do: "15:00"
-		}
-	]
-}
 
 const Schedule: FC = () => {
 	const { token } = useContext(Context);
@@ -98,13 +34,13 @@ const Schedule: FC = () => {
 	useEffect(() => {
 		if (queryTime.isValid())
 			setYear(query.year as number);
-	}, [query.year]);
+	}, [query.year, queryTime]);
 
 	useEffect(() => {
 		if (queryTime.isValid()){
 			setMonth(queryTime.month())
 		}
-	}, [query.month]);
+	}, [query.month, queryTime]);
 
 	if (loading)
 		return <div>Loading...</div>;

@@ -32,7 +32,7 @@ const Pagination = ({ className="", style={}, page=1, pageCount=1, onChangePage=
 
 	useEffect(() => {
 		onChangePage(currentPage);
-	}, [currentPage]);
+	}, [currentPage, onChangePage]);
 
 	return (
 		<div className={classes} style={style}>

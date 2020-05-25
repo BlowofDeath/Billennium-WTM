@@ -12,7 +12,6 @@ const StyledForm = styled(FormControl)({
 })
 
 const UserCreateForm: FC = () => {
-	const [loading, setLoading] = useState(false);
 	const [role, setRole] = useState("Pracownik");
 	
 	const _handleRoleChange = function(e: any) {

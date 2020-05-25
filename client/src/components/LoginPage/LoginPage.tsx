@@ -30,7 +30,7 @@ const LoginPage: FC = () => {
 		localStorage.setItem(USER, JSON.stringify({ ...data.login.user }));
 		history.push('/');
 		context.update({ token: data.login.token, user: { ...data.login.user } });
-	}, [data]);
+	}, [data, context, history]);
 
 	useEffect(() => {
 		console.log(error);

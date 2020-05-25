@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -10,7 +10,7 @@ const Checkbox = ({ className="", style={}, label="Checkbox", name=null, onChang
 
 	useEffect(() => {
 		onChange(name, isChecked);
-	}, [isChecked]);
+	}, [isChecked, name, onChange]);
 
 	return (
 		<div className={classes} style={style}>

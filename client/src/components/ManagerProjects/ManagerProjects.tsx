@@ -1,6 +1,5 @@
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import { StyledProjectContainer, StyledProjectItem, StyledProjectDescription, StyledProjectInfo } from './Atoms';
-import { Context } from '../App/Context';
 import { useQuery } from '@apollo/react-hooks';
 import { ManagerProjectsQuery } from '../../queries';
 
@@ -19,7 +18,6 @@ const aggregateTime = (workTimeHours: Array<WorkTimeHour>) => {
 }
 
 const ManagerProjects: FC = () => {
-	const { token, task, update } = useContext(Context);
 	const { data, loading, error } = useQuery(ManagerProjectsQuery);
 
 	if (loading)

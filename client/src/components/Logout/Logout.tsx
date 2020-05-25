@@ -10,7 +10,7 @@ const Logout: FC = () => {
 		localStorage.removeItem(AUTH_TOKEN);
 		localStorage.removeItem(USER);
 		context.update({ token: null, user: null });
-	}, []);
+	}, [context]);
 
 	return (
 		<Redirect to="/"/>

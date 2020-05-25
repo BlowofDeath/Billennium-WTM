@@ -35,7 +35,7 @@ const Projects: FC = () => {
 	useEffect(() => {
 		if (startResult.data)
 			localStorage.setItem(TASK, JSON.stringify(task));
-	}, [startResult.data]);
+	}, [startResult.data, task]);
 
 	useEffect(() => {
 		if (stopResult.data)

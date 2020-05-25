@@ -7,7 +7,7 @@ import { Button, Backdrop } from '@material-ui/core';
 import UserCreateForm from '../UserCreateForm/UserCreateForm';
 
 const AdminUsersPage: FC = () => {
-	const { data, loading, error } = useQuery(AdminUsersQuery);
+	const { data } = useQuery(AdminUsersQuery);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	return (
