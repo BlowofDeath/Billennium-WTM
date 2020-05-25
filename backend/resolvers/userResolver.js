@@ -7,7 +7,8 @@ import { UserInputError, AuthenticationError } from "apollo-server";
 import validator from "validator";
 import { signJWT, verifyJWT } from "../middleware/jwtTool";
 import moment from "moment";
-import { Op } from "sequelize";
+import { QueryTypes } from "sequelize";
+import db from "../configs/database";
 
 const userResolver = {
   Query: {
@@ -24,19 +25,10 @@ const userResolver = {
   },
   User: {
     projects: async ({ id }, args) => {
-      const months = await Month.findAll({ where: { userId: id } });
-      const monthQuery = [];
-      months.forEach((value) => {
-        monthQuery.push({ monthId: value.id });
-      });
-      const wtr = await WorkTimeRecord.findAll({
-        where: { [Op.or]: monthQuery },
-      });
-      const wtrQuery = [];
-      wtr.forEach((value) => {
-        wtrQuery.push({ id: value.projectId });
-      });
-      return await Project.findAll({ where: { [Op.or]: wtrQuery } });
+      return await db.query(
+        `SELECT DISTINCT u.id FROM projects AS p LEFT JOIN worktimerecords AS w ON p.id = w.projectid LEFT JOIN months AS m ON w.monthid = m.id LEFT JOIN users AS u ON m.userid = u.id WHERE u.id = ${id}`,
+        { type: QueryTypes.SELECT }
+      );
     },
   },
   Mutation: {

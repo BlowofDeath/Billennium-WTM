@@ -9,5 +9,6 @@ const Project = db.define("projects", {
 });
 
 Project.hasMany(WorkTimeRecord);
+WorkTimeRecord.belongsTo(Project);
 
 export default Project;

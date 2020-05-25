@@ -9,5 +9,6 @@ const Month = db.define("months", {
 });
 
 Month.hasMany(WorkTimeRecord);
+WorkTimeRecord.belongsTo(Month);
 
 export default Month;

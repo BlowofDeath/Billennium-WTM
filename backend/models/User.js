@@ -1,6 +1,7 @@
 import Sequelize from "sequelize";
 import db from "../configs/database";
 import Month from "./Month";
+import WorkTimeRecord from "./WorkTimeRecord";
 
 const User = db.define("users", {
   email: Sequelize.STRING,
@@ -13,5 +14,6 @@ const User = db.define("users", {
 });
 
 User.hasMany(Month);
+Month.belongsTo(User);
 
 export default User;
