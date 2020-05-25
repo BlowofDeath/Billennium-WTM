@@ -17,7 +17,7 @@ export interface ContextType {
 	user: 				IUser | null,
 	task: 				ITask | null,
 	isSidebarVisible: 	boolean,
-	update: 			(state: object) => void
+	update: 			(state: object, callback?: () => void) => void
 }
 
 export const defaultContextValue = {

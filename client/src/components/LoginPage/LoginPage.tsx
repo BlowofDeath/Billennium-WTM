@@ -23,13 +23,18 @@ const LoginPage: FC = () => {
 	const { login, data, loading, error } = useLogin();
 
 	useEffect(() => {
-		if (!data || context?.user)
+		let mounted = true;
+		if (data === undefined || context?.user)
 			return;
 
-		localStorage.setItem(AUTH_TOKEN, data.token);
-		localStorage.setItem(USER, JSON.stringify({ ...data.login.user }));
-		history.push('/');
-		context.update({ token: data.login.token, user: { ...data.login.user } });
+		if (mounted) {
+			localStorage.setItem(AUTH_TOKEN, data.login.token);
+			localStorage.setItem(USER, JSON.stringify({ ...data.login.user }));
+			context.update({ token: data.login.token, user: { ...data.login.user } });
+			history.push('/');
+		}
+
+		return () => { mounted = false };
 	}, [data, context, history]);
 
 	useEffect(() => {

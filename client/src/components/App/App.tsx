@@ -19,7 +19,7 @@ class App extends Component {
 
 	render() {
 		return (
-			<Context.Provider value={{ ...this.state, update: (state) => { this.setState({ ...state }) }}}>
+			<Context.Provider value={{ ...this.state, update: (state) => { this.setState({ ...state }, () => { console.log(this.state) }) }}}>
 				<ApolloProvider client={client}>
 					<div className="App">
 						<Layout 
