@@ -40,6 +40,9 @@ const projectResolver = {
       return project;
     },
     removeProject: async (_, { id }) => {
+      const wtr = await Project.findAll({ where: { projectId: id } });
+      if (wtr)
+        throw new Error("Can't delete project with related WorkTimeRecord");
       const project = Project.destroy({ where: { id } });
       return project;
     },
