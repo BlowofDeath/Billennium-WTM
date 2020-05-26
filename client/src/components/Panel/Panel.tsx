@@ -1,10 +1,13 @@
 import React, { FC, ReactNode } from 'react';
-import styled from 'styled-components';
+import { styled } from '@material-ui/styles';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 
 interface IProps {
+	/** */
 	children: ReactNode | ReactNode[] | JSX.Element | JSX.Element[] | string | null,
+	/** */
 	style?: CSSProperties,
+	/** */
 	className?: string
 }
 
@@ -23,5 +26,6 @@ Panel.defaultProps = {
 
 export default styled(Panel)({
 	background: "#fefefe",
-	padding: "20px"
+	padding: "20px",
+	marginBottom: "10px"
 });

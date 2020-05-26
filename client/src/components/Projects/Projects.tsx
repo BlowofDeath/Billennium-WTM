@@ -6,6 +6,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { UserProjectsQuery } from '../../graphql/queries';
 import { StartTimeRecordingMutation, StopTimeRecordingMutation } from '../../graphql/mutations';
 import { TASK } from '../../constants';
+import Panel from '../Panel';
 
 const Projects: FC = () => {
 	const { token, task, update } = useContext(Context);
@@ -51,7 +52,7 @@ const Projects: FC = () => {
 		<div>
 			<h3>Projects</h3>
 			
-			<StyledProjectContainer>
+			<Panel>
 			{
 				 data.projects.map((project: any, index: number) => {
 					project.id = parseInt(project.id);
@@ -80,7 +81,7 @@ const Projects: FC = () => {
 					)
 				})
 			}
-			</StyledProjectContainer>
+			</Panel>
 		</div>
 	)
 }

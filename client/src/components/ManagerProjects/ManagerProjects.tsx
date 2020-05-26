@@ -1,12 +1,18 @@
-import React, { FC } from 'react';
-import { StyledProjectContainer, StyledProjectItem, StyledProjectDescription, StyledProjectInfo } from './Atoms';
+import React, { FC, useReducer, useEffect } from 'react';
+import { StyledProjectItem, StyledProjectDescription, StyledProjectInfo } from './Atoms';
 import { useQuery } from '@apollo/react-hooks';
 import moment from 'moment';
 import { ManagerProjectsQuery } from '../../graphql/queries';
+import { FaPlus } from 'react-icons/fa';
+import Panel from '../Panel/Panel';
+import { Button, Backdrop } from '@material-ui/core';
+import ProjectCreationForm from '../ProjectCreationForm/ProjectCreationForm';
+import { useProjectCreationHandler } from './useProjectCreationHandler';
+import Loader from '../Loader/Loader';
 
 interface WorkTimeHour {
-	from: string,
-	to: string
+	from: 	string,
+	to: 	string
 }
 
 /** Aggregate time returns work time in minutes */
@@ -26,7 +32,16 @@ const aggregateTime = (workTimeHours: Array<WorkTimeHour>) => {
 }
 
 const ManagerProjects: FC = () => {
-	const { data, loading, error } = useQuery(ManagerProjectsQuery);
+	const [isBackdropOpen, toggleBackdrop] = useReducer((state) => !state, false);
+	const { data, loading, error, refetch } = useQuery(ManagerProjectsQuery);
+	const [onProjectCreate, creationResult] = useProjectCreationHandler();
+
+	useEffect(() => {
+		if (!creationResult.data) {
+			refetch();
+		}
+			
+	}, [creationResult.data, refetch]);
 
 	if (loading)
 		return <span>Loading...</span>;
@@ -35,8 +50,22 @@ const ManagerProjects: FC = () => {
 
 	return (
 		<div>
-			<h2>Projects</h2>
-			<StyledProjectContainer>
+			<Backdrop open={isBackdropOpen} onClick={toggleBackdrop} style={{ zIndex: 2000 }}>
+				<ProjectCreationForm onSubmit={onProjectCreate}/>
+				<Loader loading={creationResult.loading}/>
+			</Backdrop>
+
+			<h2>Projekty</h2>
+			<Panel>
+				<Button
+					variant="contained"
+					color="primary"
+					startIcon={<FaPlus/>}
+					onClick={toggleBackdrop}>
+					Dodaj 
+				</Button>
+			</Panel>
+			<Panel>
 			{
 				 data.projects.map((project: any, index: number) => {
 					project.id = parseInt(project.id);
@@ -60,7 +89,7 @@ const ManagerProjects: FC = () => {
 					)
 				})
 			}
-			</StyledProjectContainer>
+			</Panel>
 		</div>
 	)
 }
