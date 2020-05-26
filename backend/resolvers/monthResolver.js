@@ -3,11 +3,13 @@ import User from "../models/User";
 import { UserInputError } from "apollo-server";
 import validator from "validator";
 import WorkTimeRecord from "../models/WorkTimeRecord";
+import { verifyJWT } from "../middleware/jwtTool";
 
 const monthResolver = {
   Query: {
     month: async (_, { token, month, year }) => {
-      return await Month.findOne({ where: { year, month, userId: 1 } });
+      const { userId } = verifyJWT(token);
+      return await Month.findOne({ where: { year, month, userId } });
     },
     monthForAllUsers: async (_, { token, month, year }) => {
       //zwraca work time z każdego miesiąca dla wszystkich userów
