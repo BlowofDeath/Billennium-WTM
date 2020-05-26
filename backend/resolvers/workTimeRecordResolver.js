@@ -95,9 +95,9 @@ const workTimeRecordResolver = {
       //Sprawdza czy ostatni wtr istnieje i czy jest zakończczony
       if (!wtr) return null;
       if (wtr.to != null) return null;
-      const now = moment().valueOf();
+      const now = moment();
       wtr.to = now;
-      if (wtr.from + 300000 >= now) {
+      if (now.valueOf() - wtr.from.valueOf() >= 300000) {
         await wtr.save();
         return wtr;
       } else {

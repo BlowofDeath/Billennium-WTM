@@ -7,6 +7,8 @@ import moment from "moment";
 import { verifyJWT } from "../middleware/jwtTool";
 import User from "../models/User";
 import { Op } from "sequelize";
+import { QueryTypes } from "sequelize";
+import db from "../configs/database";
 
 const projectResolver = {
   Query: {
@@ -47,35 +49,35 @@ const projectResolver = {
       return await WorkTimeRecord.findAll({ where: { projectId: id } });
     },
     users: async ({ id }, args) => {
-      const wtr = await WorkTimeRecord.findAll({ where: { projectId: id } });
-      let monthsQuery = [];
-      wtr.forEach((value) => {
-        monthsQuery.push({ id: value.monthId });
+      // return await db.query(
+      //   `SELECT DISTINCT * FROM users AS u LEFT JOIN months AS m ON u.id = m.userid LEFT JOIN worktimerecords AS w on m.id = w.monthid WHERE w.projectid = ${id}`,
+      //   { type: QueryTypes.SELECT }
+      // );
+      return await User.findAll({
+        include: [
+          {
+            model: Month,
+            required: true,
+            include: [
+              {
+                model: WorkTimeRecord,
+                where: { projectId: id },
+              },
+            ],
+          },
+        ],
       });
-
-      const months = await Month.findAll({ where: { [Op.or]: monthsQuery } });
-      let users = [];
-
-      months.forEach((value) => {
-        users.push({ id: value.userId });
-      });
-      return await User.findAll({ where: { [Op.or]: users } });
     },
     wtrsPerMonth: async ({ id }, { month, year }) => {
-      const wtr = await WorkTimeRecord.findAll({ where: { projectId: id } });
-      const monthsQuery = [];
-      wtr.forEach((value) => {
-        monthsQuery.push({ id: value.monthId });
+      return await WorkTimeRecord.findAll({
+        include: [
+          {
+            model: Month,
+            where: { month, year },
+          },
+          { model: Project, where: { id } },
+        ],
       });
-      const months = await Month.findAll({
-        where: { month, year, [Op.or]: monthsQuery },
-      });
-      const wtrQuery = [];
-      months.forEach((value) => {
-        wtrQuery.push({ monthId: value.id });
-      });
-
-      return await WorkTimeRecord.findAll({ where: { [Op.or]: wtrQuery } });
     },
   },
 };
