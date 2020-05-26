@@ -11,7 +11,6 @@ export const StyledProjectItem = styled('div')({
 	display: "flex",
 	width: "100%",
 	background: "#fefefe",
-	color: "#222222",
 	padding: "20px",
 	borderBottom: "1px solid #efefef",
 
@@ -19,7 +18,7 @@ export const StyledProjectItem = styled('div')({
 		borderTop: "1px solid #efefef"
 	},
 	"&:hover": {
-		background:"#f4f4f4"
+		background: "#f4f4f4"
 	}
 })
 

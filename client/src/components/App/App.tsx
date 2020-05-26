@@ -7,10 +7,6 @@ import Navigation from '../Navigation/Navigation';
 import { Context, defaultContextValue } from './Context';
 import ApolloClient from 'apollo-boost';
 import { AUTH_TOKEN, USER, TASK } from '../../constants';
-import { ThemeProvider } from '@material-ui/styles';
-
-import defaultTheme from '../../themes/default';
-// import darkTheme from '../../themes/dark';
 
 const client = new ApolloClient({
 	uri: 'http://192.168.1.101:4000'
@@ -33,13 +29,11 @@ class App extends Component {
 		return (
 			<Context.Provider value={{ ...this.state, update: this._update }}>
 				<ApolloProvider client={client}>
-					<ThemeProvider theme={defaultTheme}>
-						<div className="App">
-							<Layout 
-								main={<Router />}
-								sidenav={<Navigation />}/>
-						</div>
-					</ThemeProvider>
+					<div className="App">
+						<Layout 
+							main={<Router />}
+							sidenav={<Navigation />}/>
+					</div>
 				</ApolloProvider>
 			</Context.Provider>
 		)
