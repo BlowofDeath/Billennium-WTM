@@ -25,7 +25,7 @@ export const StyledAppBar = styled(AppBar)({
 
 export const ContentContainer = styled('div')({
 	position: "relative",
-	background: "RGB(240,242,245)",
+	background: `RGB(240,242,245)`,
 	overflowY: "scroll",
 	maxHeight: "100vh",
 	width: "100%",

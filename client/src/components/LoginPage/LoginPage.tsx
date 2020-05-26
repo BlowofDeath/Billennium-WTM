@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, SyntheticEvent, useContext } from 'react';
-import { InputAdornment, Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
+import { InputAdornment, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 import { StyledLoginPage, StyledLoginForm, StyledFormHeader, StyledButton } from './Atoms';
 import { useHistory } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { Context } from '../App/Context';
 import EmailField from '../EmailField';
 import PasswordField from '../PasswordField/PasswordField';
 import { useLogin } from './useLogin';
+import Loader from '../Loader/Loader';
 
 const textFieldStyles = {
 	width: "100%",
@@ -58,9 +59,8 @@ const LoginPage: FC = () => {
 					</Alert>
 				</Snackbar>
 
-				<Backdrop open={loading} style={{ zIndex: 1000, background: "#00000055", position: "absolute", left: "0", top: "0" }}>
-					<CircularProgress variant="indeterminate"/>
-				</Backdrop>
+				<Loader loading={loading}/>
+
 				<div style={{ flex: 1, flexDirection: "column" }}>
 					<StyledFormHeader>Login</StyledFormHeader>
 					

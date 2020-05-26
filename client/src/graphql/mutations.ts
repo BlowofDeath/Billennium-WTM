@@ -28,3 +28,11 @@ export const StopTimeRecordingMutation = gql`
 		}
 	}
 `;
+
+export const CreateProjectMutation = gql`
+	mutation CreateProjectMutation($name: String!, $description: String!) {
+		addProject(name: $name, description: $description) {
+			name, description
+		}
+	}
+`;
