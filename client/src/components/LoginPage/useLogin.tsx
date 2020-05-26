@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/react-hooks";
-import { loginMutation } from "../../mutations";
+import { loginMutation } from "../../graphql/mutations";
 
 const useLogin = () => {
 	const [login, { data, loading, error }] = useMutation(loginMutation);

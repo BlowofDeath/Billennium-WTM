@@ -2,7 +2,7 @@ import React, { Fragment, FC } from 'react';
 import moment from 'moment';
 import { FlexGroup, StyledSquareBlock, StatSecondaryText, StatNumber } from './Atoms';
 import { useQuery } from '@apollo/react-hooks';
-import { ManagerProjectsQuery } from '../../queries';
+import { ManagerProjectsQuery } from '../../graphql/queries';
 
 const ManagerDashboardPage: FC = () => {
 	const projectsQuery = useQuery(ManagerProjectsQuery);

@@ -1,6 +1,6 @@
 import React, { FC, Fragment, useState } from 'react';
 import ControlledTable from '../vendor/ControlledTable/ControlledTable';
-import { AdminUsersQuery } from '../../queries';
+import { AdminUsersQuery } from '../../graphql/queries';
 import { useQuery } from '@apollo/react-hooks';
 import Panel from '../Panel/Panel';
 import { Button, Backdrop } from '@material-ui/core';

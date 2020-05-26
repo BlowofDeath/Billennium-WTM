@@ -7,7 +7,7 @@ import { EventBlock } from './Atoms';
 import { useLocation, useHistory } from 'react-router-dom';
 import { parse } from 'query-string';
 import { useQuery } from '@apollo/react-hooks';
-import { UserScheduleQuery } from '../../queries';
+import { UserScheduleQuery } from '../../graphql/queries';
 
 const Schedule: FC = () => {
 	const { token } = useContext(Context);

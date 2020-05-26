@@ -1,24 +1,33 @@
 import React, { FC } from 'react';
 import { StyledProjectContainer, StyledProjectItem, StyledProjectDescription, StyledProjectInfo } from './Atoms';
 import { useQuery } from '@apollo/react-hooks';
-import { ManagerProjectsQuery } from '../../queries';
+import moment from 'moment';
+import { ManagerProjectsQuery } from '../../graphql/queries';
 
 interface WorkTimeHour {
-	from: number,
-	to: number
+	from: string,
+	to: string
 }
 
+/** Aggregate time returns work time in minutes */
 const aggregateTime = (workTimeHours: Array<WorkTimeHour>) => {
 	let sum = 0;
-	console.log(workTimeHours)
+
 	for (let i = 0; i < workTimeHours.length; i++) {
-		sum += (workTimeHours[i].to - workTimeHours[i].from);
+		let to = parseInt(workTimeHours[i].to);
+		let from = parseInt(workTimeHours[i].from);
+		
+		if (!workTimeHours[i].to)
+			continue;
+	
+		sum += moment(to).diff(moment(from), "minutes");
 	}
 	return sum;
 }
 
 const ManagerProjects: FC = () => {
 	const { data, loading, error } = useQuery(ManagerProjectsQuery);
+
 
 	if (loading)
 		return <span>Loading...</span>;
@@ -28,7 +37,6 @@ const ManagerProjects: FC = () => {
 	return (
 		<div>
 			<h2>Projects</h2>
-			
 			<StyledProjectContainer>
 			{
 				 data.projects.map((project: any, index: number) => {
@@ -44,7 +52,10 @@ const ManagerProjects: FC = () => {
 								</StyledProjectDescription>
 							</StyledProjectInfo>
 							<div>
-								{ Math.floor(time / 3600000) }h { (time / 60000).toFixed(0) }min
+								<div>Łączny czas pracy</div>
+								<StyledProjectDescription>
+									{ Math.floor(time / 60) }h { time % 60 }min
+								</StyledProjectDescription>
 							</div>
 						</StyledProjectItem>
 					)

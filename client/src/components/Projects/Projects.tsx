@@ -3,8 +3,8 @@ import { BsPlay, BsStop } from 'react-icons/bs';
 import { StyledProjectContainer, StyledProjectItem, StyledProjectDescription, StyledProjectInfo, StyledButton } from './Atoms';
 import { Context } from '../App/Context';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { UserProjectsQuery } from '../../queries';
-import { StartTimeRecordingMutation, StopTimeRecordingMutation } from '../../mutations';
+import { UserProjectsQuery } from '../../graphql/queries';
+import { StartTimeRecordingMutation, StopTimeRecordingMutation } from '../../graphql/mutations';
 import { TASK } from '../../constants';
 
 const Projects: FC = () => {
