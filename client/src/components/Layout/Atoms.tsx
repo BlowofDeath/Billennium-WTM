@@ -34,12 +34,15 @@ export const ContentContainer = styled('div')({
 		width: "100%"
 	},
 	'@media (min-width: 600px) and (max-width: 960px)': {
-		width: "70vw"
+		width: "70vw",
+		flexGrow: 666
 	},
 	'@media (min-width: 960px) and (max-width: 1280px)': {
-		width: "75vw"
+		width: "75vw",
+		flexGrow: 666
 	},
 	'@media (min-width: 1280px) and (max-width: 1920px)': {
-		width: "80vw"
+		width: "80vw",
+		flexGrow: 666
 	}
 })

@@ -32,14 +32,21 @@ const Schedule: FC = () => {
 	refetch();
 
 	useEffect(() => {
-		if (queryTime.isValid())
+		let mounted = true;
+
+		if (mounted && queryTime.isValid())
 			setYear(query.year as number);
+
+		return () => { mounted = false }
 	}, [query.year, queryTime]);
 
 	useEffect(() => {
-		if (queryTime.isValid()){
+		let mounted = true;
+
+		if (mounted && queryTime.isValid()){
 			setMonth(queryTime.month())
 		}
+		return () => { mounted = false }
 	}, [query.month, queryTime]);
 
 	if (loading)

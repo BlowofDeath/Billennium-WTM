@@ -13,13 +13,21 @@ const client = new ApolloClient({
 })
 
 class App extends Component {
+	/**
+	 *
+	 */
+	constructor(props: any) {
+		super(props);
+		this._update = this._update.bind(this);
+	}
+	
 	state = {
 		...defaultContextValue
 	}
 
 	render() {
 		return (
-			<Context.Provider value={{ ...this.state, update: (state) => { this.setState({ ...state }, () => { console.log(this.state) }) }}}>
+			<Context.Provider value={{ ...this.state, update: this._update }}>
 				<ApolloProvider client={client}>
 					<div className="App">
 						<Layout 
@@ -30,6 +38,13 @@ class App extends Component {
 			</Context.Provider>
 		)
 	}
+
+	_update(state: any) {
+		this.setState({ ...state }, () => {
+			console.log(this.state);
+		});
+	}
+
 	static getDerivedStateFromProps(props: any, state: any) {
 		const token = localStorage.getItem(AUTH_TOKEN);
 		const user = JSON.parse(localStorage.getItem(USER) as string);

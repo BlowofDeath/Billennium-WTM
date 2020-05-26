@@ -28,7 +28,6 @@ const aggregateTime = (workTimeHours: Array<WorkTimeHour>) => {
 const ManagerProjects: FC = () => {
 	const { data, loading, error } = useQuery(ManagerProjectsQuery);
 
-
 	if (loading)
 		return <span>Loading...</span>;
 	if (error)

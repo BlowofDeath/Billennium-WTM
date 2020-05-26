@@ -16,7 +16,7 @@ interface IProps {
 
 /** Layout component */
 const Layout: FC<IProps> = ({ sidenav, main }) => {
-	const { token } = useContext(Context);
+	const { token, update, isSidebarVisible } = useContext(Context);
 	const isAuthenticated = typeof token === 'string' && token !== null;
 
 	return (
@@ -28,8 +28,12 @@ const Layout: FC<IProps> = ({ sidenav, main }) => {
 			}
 			{ isAuthenticated && <Fragment>
 				<Route to="/">
-					<Container container alignItems="stretch" alignContent="stretch">
-						<Drawer>
+					<Container container alignItems="stretch" alignContent="stretch" style={{
+						display: "flex",
+						flexDirection: "row",
+						flexWrap: "nowrap"
+					}}>
+						<Drawer visible={isSidebarVisible} onSwipeLeft={() => { update({ isSidebarVisible: false }) }}>
 							<Sidebar>
 								{ sidenav }
 							</Sidebar>
@@ -37,7 +41,7 @@ const Layout: FC<IProps> = ({ sidenav, main }) => {
 
 						<ContentContainer>
 							<StyledAppBar position="absolute">
-								<FiMenu size={30}/>
+								<FiMenu size={30} onClick={() => { update({ isSidebarVisible: !isSidebarVisible }) }}/>
 								AppBar
 							</StyledAppBar>
 							<Page>
