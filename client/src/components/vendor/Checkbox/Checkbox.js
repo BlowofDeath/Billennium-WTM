@@ -8,9 +8,10 @@ const Checkbox = ({ className="", style={}, label="Checkbox", name=null, onChang
 	const classes = classNames('Checkbox', className);
 	const [isChecked, toggle] = useReducer((state) => !state, checked);
 
+	// Adding onChange to dependency array causes Maximum update depth exceeded warning
 	useEffect(() => {
 		onChange(name, isChecked);
-	}, [isChecked, name, onChange]);
+	}, [isChecked, name]);
 
 	return (
 		<div className={classes} style={style}>
