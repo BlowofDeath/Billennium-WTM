@@ -62,6 +62,10 @@ const userResolver = {
         throw new UserInputError("Wrong email adress");
       if (!validator.isLength(password, { min: 8, max: undefined }))
         throw new UserInputError("Password must have from 8 to 16 chars");
+      if (!validator.isLength(first_name, { min: 3, max: undefined }))
+        throw new UserInputError("First name must have at least 3 characters");
+      if (!validator.isLength(last_name, { min: 3, max: undefined }))
+        throw new UserInputError("Last name must have at least 3 characters");
 
       password = bcrypt.hashSync(password, 10);
 
@@ -102,14 +106,29 @@ const userResolver = {
       if (!user) throw new Error("User not found");
       const userUpdate = await User.findOne({ where: { id } });
       if (!user) throw new Error("User not found");
-      if (!validator.isEmail(email))
-        throw new UserInputError("Wrong email adress");
 
-      userUpdate.email = email;
-      userUpdate.first_name = first_name;
-      userUpdate.last_name = last_name;
-      userUpdate.salary = salary;
-      userUpdate.isActive = isActive;
+      if (email) {
+        if (!validator.isEmail(email))
+          throw new UserInputError("Wrong email adress");
+        const emailUsed = User.findOne({ where: { email } });
+        if (emailUsed && emailUsed.id != id)
+          throw new Error("Email already used");
+        userUpdate.email = email;
+      }
+      if (first_name) {
+        if (!validator.isLength(first_name, { min: 3, max: undefined }))
+          throw new UserInputError(
+            "First name must have at least 3 characters"
+          );
+        userUpdate.first_name = first_name;
+      }
+      if (last_name) {
+        if (!validator.isLength(last_name, { min: 3, max: undefined }))
+          throw new UserInputError("Last name must have at least 3 characters");
+        userUpdate.last_name = last_name;
+      }
+      if (salary) userUpdate.salary = salary;
+      if (isActive) userUpdate.isActive = isActive;
       await userUpdate.save();
       return userUpdate;
     },

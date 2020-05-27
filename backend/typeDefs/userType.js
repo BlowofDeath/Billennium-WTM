@@ -30,11 +30,11 @@ const userType = gql`
     updateUser(
       token: String!
       id: ID!
-      email: String!
-      first_name: String!
-      last_name: String!
-      salary: Float!
-      isActive: Boolean!
+      email: String
+      first_name: String
+      last_name: String
+      salary: Float
+      isActive: Boolean
     ): User!
   }
 

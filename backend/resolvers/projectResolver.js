@@ -32,10 +32,10 @@ const projectResolver = {
       return project;
     },
     updateProject: async (_, { id, name, description, isClosed }) => {
-      const project = Project.findOne({ where: { id } });
-      project.name = name;
-      project.description = description;
-      project.isClosed = isClosed;
+      const project = await Project.findOne({ where: { id } });
+      if (name) project.name = name;
+      if (description) project.description = description;
+      if (isClosed) project.isClosed = isClosed;
       await project.save();
       return project;
     },
