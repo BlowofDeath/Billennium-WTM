@@ -6,6 +6,7 @@ import moment from "moment";
 import { verifyJWT } from "../middleware/jwtTool";
 import User from "../models/User";
 import Project from "../models/Project";
+import { stopWTR } from "../services/workTimeRecordService";
 
 const workTimeRecordResolver = {
   Query: {
@@ -43,7 +44,6 @@ const workTimeRecordResolver = {
         monthExist = await Month.create({
           month,
           year,
-          isClosed: false,
           userId: user.id,
         });
       }
@@ -55,13 +55,13 @@ const workTimeRecordResolver = {
         order: [["createdAt", "DESC"]],
       });
       //Jesli ostatni WTR istnieje i projectId różni się -> zakończ rekord
-      if (wtr && wtr.projectId != projectId) {
+      if (wtr && wtr.projectId != projectId && wtr.to == null) {
         wtr.to = now;
         await wtr.save();
-        return wtr;
       }
       //Jeśli ostatni WTR w danym miesiącu istnieje i jest zakończony, lub nie istnieje -> stwórz rekord
       if ((wtr && wtr.to != null) || !wtr) {
+        if (!projectId) throw new UserInputError("Project is not exist");
         return await WorkTimeRecord.create({
           day: newDay,
           from: now,
@@ -76,34 +76,7 @@ const workTimeRecordResolver = {
     stopWorkTimeRecord: async (_, { token }) => {
       const { userId } = verifyJWT(token);
       if (!userId) throw new AuthenticationError("Incorrect token");
-      const user = await User.findOne({ where: { id: userId } });
-      if (!user) throw new Error("User is not exist");
-      const month = await Month.findOne({
-        where: {
-          userId: userId,
-        },
-        order: [["createdAt", "DESC"]],
-      });
-      if (!month) return null;
-      //Szuka ostatni wtr
-      const wtr = await WorkTimeRecord.findOne({
-        where: {
-          monthId: month.id,
-        },
-        order: [["createdAt", "DESC"]],
-      });
-      //Sprawdza czy ostatni wtr istnieje i czy jest zakończczony
-      if (!wtr) return null;
-      if (wtr.to != null) return null;
-      const now = moment();
-      wtr.to = now;
-      if (now.valueOf() - wtr.from.valueOf() >= 300000) {
-        await wtr.save();
-        return wtr;
-      } else {
-        WorkTimeRecord.destroy({ where: { id: wtr.id } });
-        return null;
-      }
+      return stopWTR(userId);
     },
     updateWorkTimeRecord: async (_, { token, id, day, from, to }) => {
       const wtr = await WorkTimeRecord.findOne({ where: { id } });

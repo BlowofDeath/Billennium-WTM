@@ -5,7 +5,10 @@ import WorkTimeRecord from "./WorkTimeRecord";
 const Month = db.define("months", {
   month: Sequelize.INTEGER,
   year: Sequelize.INTEGER,
-  isClosed: Sequelize.BOOLEAN,
+  status: {
+    type: Sequelize.ENUM("CLOSED", "OPEN", "AWAITING"),
+    defaultValue: "OPEN",
+  },
 });
 
 Month.hasMany(WorkTimeRecord);
