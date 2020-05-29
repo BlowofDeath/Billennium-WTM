@@ -4,7 +4,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 function getTimeFromWorkTimeRecords(WTR){
 	let time = 0;
 	WTR.forEach(function(WorkTimeRecord) {
-		time += Math.abs(WorkTimeRecord.To - WorkTimeRecord.From);
+		time += Math.abs(WorkTimeRecord.to - WorkTimeRecord.from);
 	});
 	return time;
 }
@@ -54,7 +54,7 @@ function buildTableBody(data, columns) {
 	body.push(columnsPoland);
 	data.forEach(function(row) {
 		var dataRow = [];
-		let time = getTimeFromWorkTimeRecords(row["Time"]);
+		let time = getTimeFromWorkTimeRecords(row["workTimeRecords"]);
 		columns.forEach(function(column) {
 			dataRow.push(row[column].toString());
 		})
@@ -84,7 +84,7 @@ export function generujpdf(Projects, month, year){
 				alignment: 'center',
 				margin: [0, 0, 0, 15]
 			},
-			table(Projects, ['Name', 'Description', 'Time'])
+			table(Projects, ['name', 'description', 'workTimeRecords'])
 		]
 	}
 	//generuj pdf
