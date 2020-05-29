@@ -1,11 +1,11 @@
 import { createContext } from 'react';
 import { User } from '../../core/User';
-import { Project } from '../../core/Project';
+import { Task } from '../../core/Task';
 
 export interface ContextType {
 	token: 				string | null,
 	user: 				User | null,
-	task: 				Project | null,
+	task: 				Task | null,
 	isSidebarVisible: 	boolean,
 	update: 			(state: object, callback?: () => void) => void
 }

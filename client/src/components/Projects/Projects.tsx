@@ -11,6 +11,7 @@ import { StyledListItem } from '../Atoms/StyledListItem';
 import { SecondaryText } from '../Atoms/SecondaryText';
 import { Column } from '../Atoms/Column';
 import { Project } from '../../core/Project';
+import TimeCounter from '../TimeCounter/TimeCounter';
 
 const Projects: FC = () => {
 	const { token, task, update } = useContext(Context);
@@ -27,7 +28,7 @@ const Projects: FC = () => {
 					projectId: project.id
 				}
 			})
-			update({ task: project });
+			update({ task: { ...project, from: Date.now() } });
 		}
 		else if (task?.id === project.id) {
 			stop({
@@ -70,7 +71,7 @@ const Projects: FC = () => {
 									{ project.description }
 								</SecondaryText>
 							</Column>
-							<div>
+							<Column>
 								<StyledButton
 									inactive={ inactive }
 									stop={ stop }
@@ -79,7 +80,10 @@ const Projects: FC = () => {
 									startIcon={(project.id === task?.id) ? <BsStop /> : <BsPlay size={20} />}>
 									{ task?.id === project.id ? <span>Stop</span> : <span>Start</span> }
 								</StyledButton>
-							</div>
+								<SecondaryText>
+									{ project.id === task?.id && <TimeCounter from={((task?.from as number) + 300000)}/> }	
+								</SecondaryText>
+							</Column>
 						</StyledListItem>
 					)
 				})
