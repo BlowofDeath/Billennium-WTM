@@ -1,12 +1,15 @@
 import React, { FC, useContext, useEffect } from 'react';
 import { BsPlay, BsStop } from 'react-icons/bs';
-import { StyledProjectContainer, StyledProjectItem, StyledProjectDescription, StyledProjectInfo, StyledButton } from './Atoms';
+import { StyledButton } from './Atoms';
 import { Context } from '../App/Context';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { UserProjectsQuery } from '../../graphql/queries';
 import { StartTimeRecordingMutation, StopTimeRecordingMutation } from '../../graphql/mutations';
 import { TASK } from '../../constants';
 import Panel from '../Panel';
+import { StyledListItem } from '../Atoms/StyledListItem';
+import { SecondaryText } from '../Atoms/SecondaryText';
+import { Column } from '../Atoms/Column';
 
 const Projects: FC = () => {
 	const { token, task, update } = useContext(Context);
@@ -60,13 +63,13 @@ const Projects: FC = () => {
 					let stop = task && (task.index === project.id) ? "true" : undefined;
 
 					return (
-						<StyledProjectItem key={project.id}>
-							<StyledProjectInfo>
+						<StyledListItem key={project.id}>
+							<Column>
 								<span>{ project.name }</span>
-								<StyledProjectDescription>
+								<SecondaryText>
 									{ project.description }
-								</StyledProjectDescription>
-							</StyledProjectInfo>
+								</SecondaryText>
+							</Column>
 							<div>
 								<StyledButton
 									inactive={ inactive }
@@ -77,7 +80,7 @@ const Projects: FC = () => {
 									{ task?.index === project.id ? <span>Stop</span> : <span>Start</span> }
 								</StyledButton>
 							</div>
-						</StyledProjectItem>
+						</StyledListItem>
 					)
 				})
 			}

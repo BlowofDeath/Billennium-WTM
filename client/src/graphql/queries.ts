@@ -1,4 +1,5 @@
 import { gql } from 'apollo-boost';
+import { UserFragment } from './fragments';
 
 export const UserScheduleQuery = gql`
 	query UserScheduleQuery($year: Int!, $month: Int!, $token: String!) {
@@ -36,14 +37,28 @@ export const ManagerProjectsQuery = gql`
 	}
 `;
 
+export const ManagerSettlementsQuery = gql`
+	query ManagerSettlementsQuery($token: String!, $year: Int!, $month: Int!) {
+		monthForAllUsers(token: $token, year: $year, month: $month) {
+			month, year, isClosed,
+			user {
+				...UserFragment
+			},
+			workTimeRecords {
+				from,
+				to
+			}
+		}
+		
+	}
+	${UserFragment}
+`;
+
 export const AdminUsersQuery = gql`
 	query AdminUsersQuery {
 		users {
-			first_name,
-			last_name,
-			email,
-			id,
-			role
+			...UserFragment
 		}
 	}
+	${UserFragment}
 `;

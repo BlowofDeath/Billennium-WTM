@@ -10,6 +10,7 @@ import {
 import { IconType } from 'react-icons/lib/cjs';
 import { Context, ContextType } from '../App/Context';
 import UserBadge from '../UserBadge/UserBadge';
+import { BsCalendar } from 'react-icons/bs';
 
 interface MenuItem {
 	name: string,
@@ -35,6 +36,12 @@ const items: Array<MenuItem> = [
 		to: "/projects",
 		if: (context: ContextType) => context.user?.role === 'Kierownik',
 		Icon: AiOutlineBarChart
+	},
+	{
+		name: "Rozliczenia",
+		to: "/settlements",
+		if: (context: ContextType) => context.user?.role === 'Kierownik',
+		Icon: BsCalendar
 	},
 	{
 		name: 'Grafik',

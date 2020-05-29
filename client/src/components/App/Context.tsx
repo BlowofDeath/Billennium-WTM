@@ -1,21 +1,11 @@
 import { createContext } from 'react';
-
-export interface IUser {
-	email: string,
-	role: string,
-	first_name: string,
-	last_name: string
-}
-
-export interface ITask {
-	name: string,
-	index: number
-}
+import { User } from '../../core/User';
+import { Task } from '../../core/Task';
 
 export interface ContextType {
 	token: 				string | null,
-	user: 				IUser | null,
-	task: 				ITask | null,
+	user: 				User | null,
+	task: 				Task | null,
 	isSidebarVisible: 	boolean,
 	update: 			(state: object, callback?: () => void) => void
 }

@@ -7,6 +7,7 @@ import { Context } from '../App/Context';
 import ManagerProjects from '../ManagerProjects/ManagerProjects';
 import AdminUsersPage from '../AdminUsersPage/AdminUsersPage';
 import ManagerDashboardPage from '../ManagerDashboardPage/ManagerDashboardPage';
+import ManagerSettlementPage from '../ManagerSettlementsPage/ManagerSettlementsPage';
 
 const Router: StatelessComponent = () => {
 	const { user, token } = useContext(Context);
@@ -19,6 +20,7 @@ const Router: StatelessComponent = () => {
 			{ user?.role === "Admin" && token && <Route path="/users" exact component={AdminUsersPage}/> }
 
 			{  user?.role === "Kierownik" && token && <Route path="/projects" exact component={ManagerProjects}/> }
+			{ user?.role === "Kierownik" && token && <Route path="/settlements" exact component={ManagerSettlementPage}/> }
 
 			{ user?.role === "Pracownik" && token && <Route path="/schedule" exact component={Schedule}/> }
 			<Route path="/logout" exact component={Logout}/>

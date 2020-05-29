@@ -1,7 +1,6 @@
 import React, { FC, useReducer, useEffect } from 'react';
 import { StyledProjectItem, StyledProjectDescription, StyledProjectInfo } from './Atoms';
 import { useQuery } from '@apollo/react-hooks';
-import moment from 'moment';
 import { ManagerProjectsQuery } from '../../graphql/queries';
 import { FaPlus } from 'react-icons/fa';
 import Panel from '../Panel/Panel';
@@ -10,27 +9,7 @@ import ProjectCreationForm from '../ProjectCreationForm/ProjectCreationForm';
 import { useProjectCreationHandler } from './useProjectCreationHandler';
 import Loader from '../Loader/Loader';
 import { generujpdf } from '../../scripts/generatorPDF';
-
-interface WorkTimeHour {
-	from: 	string,
-	to: 	string
-}
-
-/** Aggregate time returns work time in minutes */
-const aggregateTime = (workTimeHours: Array<WorkTimeHour>) => {
-	let sum = 0;
-
-	for (let i = 0; i < workTimeHours.length; i++) {
-		let to = parseInt(workTimeHours[i].to);
-		let from = parseInt(workTimeHours[i].from);
-		
-		if (!workTimeHours[i].to)
-			continue;
-	
-		sum += moment(to).diff(moment(from), "minutes");
-	}
-	return sum;
-}
+import { aggregateWTRs } from '../../scripts/aggregateWTRs';
 
 const ManagerProjects: FC = () => {
 	const [isBackdropOpen, toggleBackdrop] = useReducer((state) => !state, false);
@@ -76,7 +55,7 @@ const ManagerProjects: FC = () => {
 			{
 				 data.projects.map((project: any, index: number) => {
 					project.id = parseInt(project.id);
-					let time = aggregateTime(project.workTimeRecords ?? []);
+					let time = aggregateWTRs(project.workTimeRecords ?? []);
 
 					return (
 						<StyledProjectItem key={project.id}>

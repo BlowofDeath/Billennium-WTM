@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { StyledUserBadge, StyledUserInfo } from './Atoms';
-import { IUser } from '../App/Context';
+import { User } from '../../core/User';
 
 interface IProps {
-	user: IUser
+	user: User
 }
 
 const UserBadge: FC<IProps> = ({ user }) => {
