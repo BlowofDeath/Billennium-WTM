@@ -1,10 +1,13 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import moment from 'moment';
 
 function getTimeFromWorkTimeRecords(WTR){
 	let time = 0;
 	WTR.forEach(function(WorkTimeRecord) {
-		time += Math.abs(parseInt(WorkTimeRecord.to) - parseInt(WorkTimeRecord.from));
+		let to=parseInt(WorkTimeRecord.to);
+		let from=parseInt(WorkTimeRecord.from);
+		time += moment(to).diff(moment(from), "minutes");
 	});
 	return time;
 }
@@ -13,12 +16,13 @@ function getTimeFromWorkTimeRecords(WTR){
 function timeToString(time){
 	let outputString = "";
 	//zamiana na czas czytelny dla człowieka
-	const daysDifference = Math.floor(time/60/60/24/1000);
-	time -= daysDifference*60*60*24*1000
-	const hoursDifference = Math.floor(time/60/60/1000);
-	time -= hoursDifference*60*60*1000
-	const minutesDifference = Math.floor(time/60/1000);
-	time -= minutesDifference*60*1000
+	const daysDifference = Math.floor(time/60/24);
+	time -= daysDifference*60*24
+	const hoursDifference = Math.floor(time/60);
+	time -= hoursDifference*60
+	const minutesDifference = Math.floor(time);
+	time -= minutesDifference
+	console.log(time);
 	// tekst początkowy
 	outputString += "Sumaryczny czas poświęcony na projekt: \n\n"
 	// dodaj do stringa dni w odp formacie
