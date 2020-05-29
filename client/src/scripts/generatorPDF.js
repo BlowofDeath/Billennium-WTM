@@ -4,7 +4,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 function getTimeFromWorkTimeRecords(WTR){
 	let time = 0;
 	WTR.forEach(function(WorkTimeRecord) {
-		time += Math.abs(WorkTimeRecord.to - WorkTimeRecord.from);
+		time += Math.abs(parseInt(WorkTimeRecord.to) - parseInt(WorkTimeRecord.from));
 	});
 	return time;
 }
@@ -13,12 +13,12 @@ function getTimeFromWorkTimeRecords(WTR){
 function timeToString(time){
 	let outputString = "";
 	//zamiana na czas czytelny dla człowieka
-	const daysDifference = Math.floor(time/60/60/24);
-	time -= daysDifference*60*60*24
-	const hoursDifference = Math.floor(time/60/60);
-	time -= hoursDifference*60*60
-	const minutesDifference = Math.floor(time/60);
-	time -= minutesDifference*60
+	const daysDifference = Math.floor(time/60/60/24/1000);
+	time -= daysDifference*60*60*24*1000
+	const hoursDifference = Math.floor(time/60/60/1000);
+	time -= hoursDifference*60*60*1000
+	const minutesDifference = Math.floor(time/60/1000);
+	time -= minutesDifference*60*1000
 	// tekst początkowy
 	outputString += "Sumaryczny czas poświęcony na projekt: \n\n"
 	// dodaj do stringa dni w odp formacie
@@ -68,6 +68,7 @@ function buildTableBody(data, columns) {
 function table(data, columns) {
 	return {
 		table: {
+			widths: [100, '*', 100],
 			headerRows: 1,
 			body: buildTableBody(data, columns)
 		}
@@ -77,10 +78,11 @@ function table(data, columns) {
 export function generujpdf(Projects, month, year){
 	//definicja dokumentu
 	pdfMake.vfs = pdfFonts.pdfMake.vfs;
+	const months=["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
 	var dd = {
 		content: [
 			{
-				text: 'Raport miesięczny z '+month+' '+year, fontSize: 18,
+				text: 'Raport miesięczny z '+months[month-1]+' '+year, fontSize: 18,
 				alignment: 'center',
 				margin: [0, 0, 0, 15]
 			},
