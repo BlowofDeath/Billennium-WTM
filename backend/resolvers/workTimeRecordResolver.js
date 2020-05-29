@@ -6,6 +6,7 @@ import moment from "moment";
 import { verifyJWT } from "../middleware/jwtTool";
 import User from "../models/User";
 import Project from "../models/Project";
+import { stopWTR } from "../services/workTimeRecordService";
 
 const workTimeRecordResolver = {
   Query: {
@@ -43,7 +44,6 @@ const workTimeRecordResolver = {
         monthExist = await Month.create({
           month,
           year,
-          isClosed: false,
           userId: user.id,
         });
       }
@@ -55,13 +55,13 @@ const workTimeRecordResolver = {
         order: [["createdAt", "DESC"]],
       });
       //Jesli ostatni WTR istnieje i projectId różni się -> zakończ rekord
-      if (wtr && wtr.projectId != projectId) {
+      if (wtr && wtr.projectId != projectId && wtr.to == null) {
         wtr.to = now;
         await wtr.save();
-        return wtr;
       }
       //Jeśli ostatni WTR w danym miesiącu istnieje i jest zakończony, lub nie istnieje -> stwórz rekord
       if ((wtr && wtr.to != null) || !wtr) {
+        if (!projectId) throw new UserInputError("Project is not exist");
         return await WorkTimeRecord.create({
           day: newDay,
           from: now,
@@ -104,6 +104,7 @@ const workTimeRecordResolver = {
         WorkTimeRecord.destroy({ where: { id: wtr.id } });
         return null;
       }
+      return stopWTR(userId);
     },
     updateWorkTimeRecord: async (_, { token, id, day, from, to }) => {
       const wtr = await WorkTimeRecord.findOne({ where: { id } });

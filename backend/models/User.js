@@ -8,8 +8,11 @@ const User = db.define("users", {
   password: Sequelize.STRING,
   first_name: Sequelize.STRING,
   last_name: Sequelize.STRING,
-  role: Sequelize.STRING,
-  salary: Sequelize.FLOAT,
+  role: {
+    type: Sequelize.ENUM("Pracownik", "Kierownik", "Admin"),
+    defaultValue: "Pracownik",
+  },
+  salary: Sequelize.INTEGER,
   isActive: Sequelize.BOOLEAN,
 });
 

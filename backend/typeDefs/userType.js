@@ -8,12 +8,12 @@ const userType = gql`
 
   type User {
     id: ID!
-    role: String!
+    role: Role!
     email: String!
     first_name: String!
     last_name: String!
     projects: [Project]
-    salary: Float
+    salary: Int
     isActive: Boolean!
   }
 
@@ -24,6 +24,8 @@ const userType = gql`
       password: String!
       first_name: String!
       last_name: String!
+      salary: Int
+      isActive: Boolean
     ): Auth
     login(email: String!, password: String!): Auth
     logout(token: String!): String!
@@ -33,14 +35,22 @@ const userType = gql`
       email: String
       first_name: String
       last_name: String
-      salary: Float
+      salary: Int
       isActive: Boolean
+      role: Role
     ): User!
+    removeUser(id: ID!): User
   }
 
   type Auth {
     token: String
     user: User
+  }
+
+  enum Role {
+    Pracownik
+    Kierownik
+    Admin
   }
 `;
 
