@@ -13,7 +13,7 @@ import defaultTheme from '../../themes/default';
 // import darkTheme from '../../themes/dark';
 
 const client = new ApolloClient({
-	uri: 'http://192.168.1.101:4000'
+	uri: 'http://localhost:4000/'
 })
 
 class App extends Component {
