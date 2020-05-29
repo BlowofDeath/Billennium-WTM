@@ -7,11 +7,18 @@ import moment from "moment";
 import { verifyJWT } from "../middleware/jwtTool";
 import User from "../models/User";
 import { Op } from "sequelize";
+import { QueryTypes } from "sequelize";
+import db from "../configs/database";
 
 const projectResolver = {
   Query: {
     project: async (_, { id }) => {
       return await Project.findOne({ where: { id } });
+    },
+    projects: async (_, { isClosed }) => {
+      if (typeof isClosed !== "undefined")
+        return await Project.findAll({ where: { isClosed } });
+      return await Project.findAll();
     },
   },
   Mutation: {
@@ -25,14 +32,17 @@ const projectResolver = {
       return project;
     },
     updateProject: async (_, { id, name, description, isClosed }) => {
-      const project = Project.findOne({ where: { id } });
-      project.name = name;
-      project.description = description;
-      project.isClosed = isClosed;
+      const project = await Project.findOne({ where: { id } });
+      if (name) project.name = name;
+      if (description) project.description = description;
+      if (isClosed) project.isClosed = isClosed;
       await project.save();
       return project;
     },
     removeProject: async (_, { id }) => {
+      const wtr = await Project.findAll({ where: { projectId: id } });
+      if (wtr)
+        throw new Error("Can't delete project with related WorkTimeRecord");
       const project = Project.destroy({ where: { id } });
       return project;
     },
@@ -42,19 +52,35 @@ const projectResolver = {
       return await WorkTimeRecord.findAll({ where: { projectId: id } });
     },
     users: async ({ id }, args) => {
-      const wtr = await WorkTimeRecord.findAll({ where: { projectId: id } });
-      let monthsQuery = [];
-      wtr.forEach((value) => {
-        monthsQuery.push({ id: value.monthId });
+      // return await db.query(
+      //   `SELECT DISTINCT * FROM users AS u LEFT JOIN months AS m ON u.id = m.userid LEFT JOIN worktimerecords AS w on m.id = w.monthid WHERE w.projectid = ${id}`,
+      //   { type: QueryTypes.SELECT }
+      // );
+      return await User.findAll({
+        include: [
+          {
+            model: Month,
+            required: true,
+            include: [
+              {
+                model: WorkTimeRecord,
+                where: { projectId: id },
+              },
+            ],
+          },
+        ],
       });
-
-      const months = await Month.findAll({ where: { [Op.or]: monthsQuery } });
-      let users = [];
-
-      months.forEach((value) => {
-        users.push({ id: value.userId });
+    },
+    wtrsPerMonth: async ({ id }, { month, year }) => {
+      return await WorkTimeRecord.findAll({
+        include: [
+          {
+            model: Month,
+            where: { month, year },
+          },
+          { model: Project, where: { id } },
+        ],
       });
-      return await User.findAll({ where: { [Op.or]: users } });
     },
   },
 };
