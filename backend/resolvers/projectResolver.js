@@ -32,14 +32,17 @@ const projectResolver = {
       return project;
     },
     updateProject: async (_, { id, name, description, isClosed }) => {
-      const project = Project.findOne({ where: { id } });
-      project.name = name;
-      project.description = description;
-      project.isClosed = isClosed;
+      const project = await Project.findOne({ where: { id } });
+      if (name) project.name = name;
+      if (description) project.description = description;
+      if (isClosed) project.isClosed = isClosed;
       await project.save();
       return project;
     },
     removeProject: async (_, { id }) => {
+      const wtr = await Project.findAll({ where: { projectId: id } });
+      if (wtr)
+        throw new Error("Can't delete project with related WorkTimeRecord");
       const project = Project.destroy({ where: { id } });
       return project;
     },

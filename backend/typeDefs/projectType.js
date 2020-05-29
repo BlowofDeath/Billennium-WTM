@@ -20,9 +20,9 @@ const projectType = gql`
     addProject(name: String!, description: String): Project!
     updateProject(
       id: ID!
-      name: String!
-      description: String!
-      isClosed: Boolean!
+      name: String
+      description: String
+      isClosed: Boolean
     ): Project!
     removeProject(id: ID!): Project
   }
