@@ -24,7 +24,7 @@ export const StartTimeRecordingMutation = gql`
 export const StopTimeRecordingMutation = gql`
 	mutation StopTimeRecordingMutation($token: String!) {
 		stopWorkTimeRecord(token: $token) {
-			from, to
+			from, to, day
 		}
 	}
 `;

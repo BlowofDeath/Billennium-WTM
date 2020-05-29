@@ -10,6 +10,7 @@ import Panel from '../Panel';
 import { StyledListItem } from '../Atoms/StyledListItem';
 import { SecondaryText } from '../Atoms/SecondaryText';
 import { Column } from '../Atoms/Column';
+import { Project } from '../../core/Project';
 
 const Projects: FC = () => {
 	const { token, task, update } = useContext(Context);
@@ -18,17 +19,17 @@ const Projects: FC = () => {
 	const [start, startResult] = useMutation(StartTimeRecordingMutation);
 	const [stop, stopResult] = useMutation(StopTimeRecordingMutation);
 
-	const _handleProjectClick = (project: { name: string, description: string }, index: number) => {
+	const _handleProjectClick = (project: Project) => {
 		if (task === null) {
 			start({
 				variables: {
 					token,
-					projectId: index
+					projectId: project.id
 				}
 			})
-			update({ task: { name: project.name, index } });
+			update({ task: project });
 		}
-		else if (task?.index === index) {
+		else if (task?.id === project.id) {
 			stop({
 				variables: { token }
 			})
@@ -57,10 +58,9 @@ const Projects: FC = () => {
 			
 			<Panel>
 			{
-				 data.projects.map((project: any, index: number) => {
-					project.id = parseInt(project.id);
-					let inactive = task && (task.index !== project.id) ? "true" : undefined;
-					let stop = task && (task.index === project.id) ? "true" : undefined;
+				 data.projects.map((project: Project) => {
+					let inactive = task && (task.id !== project.id) ? "true" : undefined;
+					let stop = task && (task.id === project.id) ? "true" : undefined;
 
 					return (
 						<StyledListItem key={project.id}>
@@ -74,10 +74,10 @@ const Projects: FC = () => {
 								<StyledButton
 									inactive={ inactive }
 									stop={ stop }
-									onClick={() => { _handleProjectClick(project, project.id) } }
+									onClick={() => { _handleProjectClick(project) } }
 									variant="outlined"
-									startIcon={(project.id === task?.index) ? <BsStop /> : <BsPlay size={20} />}>
-									{ task?.index === project.id ? <span>Stop</span> : <span>Start</span> }
+									startIcon={(project.id === task?.id) ? <BsStop /> : <BsPlay size={20} />}>
+									{ task?.id === project.id ? <span>Stop</span> : <span>Start</span> }
 								</StyledButton>
 							</div>
 						</StyledListItem>

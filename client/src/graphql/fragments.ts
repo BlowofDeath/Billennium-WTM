@@ -9,3 +9,12 @@ export const UserFragment = gql`
 		email
 	}
 `;
+
+export const ProjectFragment = gql`
+	fragment ProjectFragment on Project {
+		id,
+		name,
+		description,
+		isClosed
+	}
+`;
