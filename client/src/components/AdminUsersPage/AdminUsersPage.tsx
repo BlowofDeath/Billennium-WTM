@@ -29,14 +29,8 @@ const AdminUsersPage: FC = () => {
 			<Panel>
 				{ data && <ControlledTable
 							data={data.users}
-							onSelect={(user) => {
-								setSelectedUser({
-									email: user.email,
-									first_name: user.first_name,
-									last_name: user.last_name,
-									password: "",
-									role: user.role
-								})
+							onSelect={(user: FormData) => {
+								setSelectedUser({ ...user, password: "" })
 								setIsModalVisible(true);
 							}}
 							onCreate={() => { setIsModalVisible(true) }}

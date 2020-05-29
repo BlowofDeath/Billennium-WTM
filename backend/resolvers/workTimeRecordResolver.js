@@ -97,7 +97,7 @@ const workTimeRecordResolver = {
       if (wtr.to != null) return null;
       const now = moment();
       wtr.to = now;
-      if (now.valueOf() - wtr.from.valueOf() >= 300000) {
+      if (now.valueOf() - wtr.from.valueOf() >= 60000) {
         await wtr.save();
         return wtr;
       } else {

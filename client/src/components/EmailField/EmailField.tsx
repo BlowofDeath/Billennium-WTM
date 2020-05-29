@@ -1,16 +1,18 @@
-import React, { FC, useState, SyntheticEvent } from 'react';
+import React, { FC, useState, SyntheticEvent, useEffect } from 'react';
 import { TextField, TextFieldProps } from '@material-ui/core';
 import { validateEmail } from './validate';
 
 interface EmailFieldProps {
 	/** Event that triggers when valid email has been provided */
-	onEmail: (email: string | null) => void,
+	onEmail: (email: string) => void,
 	/** Helper text that should be displayed when invalid email has been provided */
-	helperText: string | null
+	helperText: string | null,
+	/** */
+	initialValue?: string
 }
 
-const EmailField: FC<EmailFieldProps & TextFieldProps> = ({ onEmail, helperText, ...props }) => {
-	const [,setEmail] = useState<string | null>(null);
+const EmailField: FC<EmailFieldProps & TextFieldProps> = ({ onEmail, helperText, initialValue="", ...props }) => {
+	const [email, setEmail] = useState<string>(initialValue);
 	const [error, setError] = useState<string | null>(null);
 
 	const _handleChange = (event: SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -21,16 +23,21 @@ const EmailField: FC<EmailFieldProps & TextFieldProps> = ({ onEmail, helperText,
 
 		if (validation?.email.length > 0) {
 			setError(validation?.email[0]);
-			onEmail(null);
+			onEmail("");
 		}
 		else {
 			onEmail(value);
-			setError(null);
+			setError("");
 		}
 	}
 
+	useEffect(() => {
+		setEmail(initialValue);
+	}, [initialValue]);
+
 	return (
 		<TextField
+			value={email}
 			error={error ? true : false}
 			helperText={error ? helperText : undefined}
 			type="email"

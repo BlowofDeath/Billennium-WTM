@@ -10,7 +10,8 @@ interface PasswordFieldProps {
 		tooLong: 	string
 	},
 	propName?: string,
-	onPassword?: (password: string | null) => void
+	onPassword?: (password: string | null) => void,
+	initialValue?: string
 }
 
 const PasswordField: FC<PasswordFieldProps & TextFieldProps> = ({
@@ -22,9 +23,10 @@ const PasswordField: FC<PasswordFieldProps & TextFieldProps> = ({
 	},
 	onPassword=function(){},
 	propName="Password",
+	initialValue="",
 	...props
 }) => {
-	const [password, setPassword] 	= useState<string>("");
+	const [password, setPassword] 	= useState<string>(initialValue);
 	const [error, setError] 		= useState<string | null>(null);
 	
 	const _handlePasswordChange = (event: SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -35,10 +37,10 @@ const PasswordField: FC<PasswordFieldProps & TextFieldProps> = ({
 		// Validation error
 		if (validate?.[propName].length > 0) {
 			setError(validate[propName][0]);
-			onPassword(null);
+			onPassword("");
 		}
 		else {
-			setError(null);
+			setError("");
 			onPassword(value);
 		}
 	}

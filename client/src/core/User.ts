@@ -4,4 +4,6 @@ export interface User {
 	role: 		string;
 	first_name: string;
 	last_name: 	string;
+	salary: 	number;
+	isActive: 	boolean;
 }

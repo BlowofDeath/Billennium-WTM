@@ -7,10 +7,14 @@ import { Context } from '../App/Context';
 import SettlementsList from '../SettlementsList/SettlementsList';
 import Loader from '../Loader/Loader';
 import Panel from '../vendor/Panel/Panel';
+import { useLocation } from 'react-router-dom';
 
-const ManagerSettlementPage: FC = ({}) => {
-	const month = moment().month() + 1;
-	const year = moment().year();
+const ManagerSettlementPage: FC = () => {
+	const { search } = useLocation();
+	const query = new URLSearchParams(search);
+	const now = moment();
+	const year = query.get('year') ? parseInt(query.get('year') as string) : now.year();
+	const month = query.get('month') ? parseInt(query.get('month') as string) : now.month() + 1;
 	const { token } = useContext(Context);
 	const { data, loading, error } = useQuery(ManagerSettlementsQuery, {
 		variables: {
