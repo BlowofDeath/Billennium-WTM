@@ -36,3 +36,15 @@ export const CreateProjectMutation = gql`
 		}
 	}
 `;
+
+export const CreateUserMutation = gql`
+	mutation CreateUserMutation($email: String!, $password: String!, $first_name: String!, $last_name: String!, $role: String!) {
+		signup(
+			email: $email, password: $password, first_name: $first_name, last_name: $last_name, role: $role
+		) {
+			user {
+				first_name, last_name, role
+			}
+		}
+	}
+`;

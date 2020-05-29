@@ -45,6 +45,7 @@ const PasswordField: FC<PasswordFieldProps & TextFieldProps> = ({
 
 	return (
 		<TextField
+			type="password"
 			value={password}
 			error={error ? true : false}
 			helperText={error}

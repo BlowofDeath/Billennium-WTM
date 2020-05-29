@@ -9,6 +9,7 @@ import { Button, Backdrop } from '@material-ui/core';
 import ProjectCreationForm from '../ProjectCreationForm/ProjectCreationForm';
 import { useProjectCreationHandler } from './useProjectCreationHandler';
 import Loader from '../Loader/Loader';
+import { generujpdf } from '../../scripts/generatorPDF';
 
 interface WorkTimeHour {
 	from: 	string,
@@ -63,6 +64,12 @@ const ManagerProjects: FC = () => {
 					startIcon={<FaPlus/>}
 					onClick={toggleBackdrop}>
 					Dodaj 
+				</Button>
+				<Button
+					variant="outlined"
+					color="primary"
+					onClick={() => { generujpdf(data.projects, 5, 2020) }}>
+						Raport
 				</Button>
 			</Panel>
 			<Panel>
