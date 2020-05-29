@@ -1,5 +1,5 @@
 import { gql } from 'apollo-boost';
-import { UserFragment } from './fragments';
+import { UserFragment, ProjectFragment } from './fragments';
 
 export const UserScheduleQuery = gql`
 	query UserScheduleQuery($year: Int!, $month: Int!, $token: String!) {
@@ -9,32 +9,33 @@ export const UserScheduleQuery = gql`
 				to,
 				day,
 				project {
-					name
+					...ProjectFragment
 				}
 			}
 		}
 	}
+	${ProjectFragment}
 `;
 
 export const UserProjectsQuery = gql`
 	query UserProjectsQuery {
 		projects {
-			name,
-			description,
-			id
+			...ProjectFragment
 		}
 	}
+	${ProjectFragment}
 `;
 
 export const ManagerProjectsQuery = gql`
 	query ManagerProjectsQuery {
 		projects {
-			name, description, id,
+			...ProjectFragment,
 			workTimeRecords {
 				from, to
 			}
 		}
 	}
+	${ProjectFragment}
 `;
 
 export const ManagerSettlementsQuery = gql`
