@@ -12,5 +12,8 @@ export const Row = styled(
 	(({ justifyContent }: JustifyContentType) => ({
 	display: "flex",
 	flexDirection: "row",
-	justifyContent: justifyContent ?? "space-between"
+	justifyContent: justifyContent ?? "space-between",
+	'& > *': {
+		margin: "0 5px"
+	}
 }))

@@ -1,16 +1,20 @@
-import React, { FC, Fragment } from 'react'
+import React, { FC, Fragment, ReactNode } from 'react'
 import moment from 'moment';
 import { StyledListItem } from '../Atoms/StyledListItem';
 import { Column } from '../Atoms/Column';
 import { SecondaryText } from '../Atoms/SecondaryText';
 import { aggregateWTRs } from '../../scripts/aggregateWTRs';
 import { Settlement } from '../../core/Settlements';
+import { Row } from '../Atoms/Row';
 
 export interface SettlementsListProps {
-	settlements: Array<Settlement>
+	/** */
+	settlements: Array<Settlement>;
+	/** */
+	settlementPostpendRender?: (settlement: Settlement) => ReactNode
 }
 
-const SettlementsList: FC<SettlementsListProps> = ({ settlements=[] }) => {
+const SettlementsList: FC<SettlementsListProps> = ({ settlements=[], settlementPostpendRender }) => {
 	
 	if (settlements.length === 0 || !settlements)
 		return <span>No result case</span>;
@@ -31,12 +35,17 @@ const SettlementsList: FC<SettlementsListProps> = ({ settlements=[] }) => {
 									{ date.format('YYYY-MM') }
 								</SecondaryText>
 							</Column>
-							<Column>
-								<span>Łączny czas pracy</span>
-								<SecondaryText>
-									{ Math.floor(time / 60) }h { time % 60 }min
-								</SecondaryText>
-							</Column>
+							<Row justifyContent="flex-end">
+								<Column>
+									<span>Łączny czas pracy</span>
+									<SecondaryText>
+										{ Math.floor(time / 60) }h { time % 60 }min
+									</SecondaryText>
+								</Column>
+								{ settlementPostpendRender && <Fragment>
+									{ settlementPostpendRender(settlement) }
+								</Fragment> }
+							</Row>
 						</StyledListItem>
 					)
 				})

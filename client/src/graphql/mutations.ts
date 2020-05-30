@@ -96,3 +96,11 @@ export const EmployeeSettlementMutation = gql`
 		}
 	}
 `;
+
+export const ManagerSettlementMutation = gql`
+	mutation ManagerSettlementMutation($id: ID!, $status: Status!) {
+		updateMonthStatus(id: $id, status: $status) {
+			id, status
+		}
+	}
+`;

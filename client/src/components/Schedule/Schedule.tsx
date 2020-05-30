@@ -27,7 +27,7 @@ const Schedule: FC = () => {
 	const [year, setYear] = useState<number>(displayTime.year());
 	const [month, setMonth] = useState<number>(displayTime.month());
 
-	const { closeMonth, ...closeActionResult } = useSettlementHandler();
+	const { closeMonth } = useSettlementHandler();
 	const { data, error, loading, refetch } = useQuery(UserScheduleQuery, {
 		variables: {
 			token,

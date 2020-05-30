@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 import { DatePicker } from '@material-ui/pickers';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import React, { FC, useContext } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { ManagerSettlementsQuery } from '../../graphql/queries';
@@ -13,6 +13,10 @@ import Loader from '../Loader/Loader';
 import Page from '../Page/Page';
 import SettlementsList from '../SettlementsList/SettlementsList';
 import Panel from '../vendor/Panel/Panel';
+import { Settlement } from '../../core/Settlements';
+import { AcceptButton } from '../Atoms/AcceptButton';
+import { DeclineButton } from '../Atoms/DeclineButton';
+import { useMonthStatusHandler } from './useMonthStatusHandler';
 
 const ManagerSettlementPage: FC = () => {
 	const history = useHistory();
@@ -22,6 +26,7 @@ const ManagerSettlementPage: FC = () => {
 	const year = query.get('year') ? parseInt(query.get('year') as string) : now.year();
 	const month = query.get('month') ? parseInt(query.get('month') as string) : now.month() + 1;
 	const { token } = useContext(Context);
+	const { changeMonthStatus } = useMonthStatusHandler();
 	const { data, loading, error } = useQuery(ManagerSettlementsQuery, {
 		variables: {
 			year, month, token
@@ -70,7 +75,22 @@ const ManagerSettlementPage: FC = () => {
 						<SecondaryText>Miesiące oczekujące rozliczenia.</SecondaryText>
 					</Column>
 				)}>
-				<SettlementsList settlements={awaits}/>
+				<SettlementsList
+					settlements={awaits}
+					settlementPostpendRender={(settlement: Settlement) => (
+						<Row>
+							<AcceptButton
+								variant="outlined"
+								onClick={() => { changeMonthStatus(settlement.id, 'CLOSED') }}>
+									Akceptuj
+							</AcceptButton>
+							<DeclineButton
+								variant="outlined"
+								onClick={() => { changeMonthStatus(settlement.id, 'OPEN') }}>
+									Odrzuć
+							</DeclineButton>
+						</Row>
+				)}/>
 			</CustomExpansionPanel>
 
 			<CustomExpansionPanel

@@ -43,7 +43,7 @@ export const ManagerProjectsQuery = gql`
 export const ManagerSettlementsQuery = gql`
 	query ManagerSettlementsQuery($token: String!, $year: Int!, $month: Int!) {
 		monthForAllUsers(token: $token, year: $year, month: $month) {
-			month, year, status,
+			id, month, year, status,
 			user {
 				...UserFragment
 			},

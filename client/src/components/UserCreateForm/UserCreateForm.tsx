@@ -81,7 +81,7 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 		isActive: 	true
 	}
 	const { token } = useContext(Context);
-	const { update, ...updateResult } = useUserUpdater();
+	const { update } = useUserUpdater();
 	const { signup, data, error, loading } = useFormCreateHandler();
 	const [formData, setFormData] = useState<FormData>(userData ?? defaultData);
 
@@ -105,11 +105,11 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 			setFormData(userData);
 		else
 			setFormData(defaultData);
-	}, [userData]);
+	}, [userData, defaultData]);
 
 	useEffect(() => {
 		onCreateUser(data, error);
-	}, [data, error]);
+	}, [data, error, onCreateUser]);
 	
 	return (
 		<StyledForm onClick={(e) => { e.stopPropagation() }} onSubmit={_handleConfirm}>

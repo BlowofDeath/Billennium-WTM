@@ -5,7 +5,6 @@ import { StyledListItem } from '../Atoms/StyledListItem';
 import { Column } from '../Atoms/Column';
 import { SecondaryText } from '../Atoms/SecondaryText';
 import { Row } from '../Atoms/Row';
-import { Button } from '@material-ui/core';
 
 export interface ProjectListProps {
 	/** */
@@ -16,7 +15,7 @@ export interface ProjectListProps {
 
 const ProjectList: FC<ProjectListProps> = ({ projects, projectPostpendRender }) => {
 	return (
-		<Fragment>
+		<Column style={{ width: "100%" }}>
 			{
 				projects.map((project: Project, index: number) => {
 					let time = aggregateWTRs(project.workTimeRecords ?? []);
@@ -45,7 +44,7 @@ const ProjectList: FC<ProjectListProps> = ({ projects, projectPostpendRender }) 
 					)
 				})
 			}
-		</Fragment>
+		</Column>
 	)
 }
 
