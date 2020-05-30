@@ -8,6 +8,12 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { parse } from 'query-string';
 import { useQuery } from '@apollo/react-hooks';
 import { UserScheduleQuery } from '../../graphql/queries';
+import Panel from '../Panel/Panel';
+import { Row } from '../Atoms/Row';
+import { Column } from '../Atoms/Column';
+import { SecondaryText } from '../Atoms/SecondaryText';
+import { Button } from '@material-ui/core';
+import { useSettlementHandler } from './useSettlementHandler';
 
 const Schedule: FC = () => {
 	const { token } = useContext(Context);
@@ -21,6 +27,7 @@ const Schedule: FC = () => {
 	const [year, setYear] = useState<number>(displayTime.year());
 	const [month, setMonth] = useState<number>(displayTime.month());
 
+	const { closeMonth, ...closeActionResult } = useSettlementHandler();
 	const { data, error, loading, refetch } = useQuery(UserScheduleQuery, {
 		variables: {
 			token,
@@ -30,6 +37,8 @@ const Schedule: FC = () => {
 	});
 
 	refetch();
+
+	console.log({data})
 
 	useEffect(() => {
 		let mounted = true;
@@ -84,6 +93,27 @@ const Schedule: FC = () => {
 				}}>
 				<Calendar.MonthSwitch />
 				<Calendar.DayLabel />
+				<Panel>
+					<Row>
+						<Column>
+							<h2>Status miesiąca</h2>
+							<SecondaryText>
+								{ !data.month && 'NIEROZPOCZĘTY' }
+								{ data?.month?.status === 'OPEN' && "OTWARTY" }
+								{ data?.month?.status === 'CLOSED' && "ZAMKNIĘTY" }
+								{ data?.month?.status === 'AWAITING' && "OCZEKUJE ROZLICZENIA" }
+							</SecondaryText>
+						</Column>
+						<Column>
+							<Button variant="outlined" color="primary" onClick={() => { closeMonth(data.month.id) }}>
+								Rozlicz
+							</Button>
+							<SecondaryText>
+								Operacji nie można cofnąć!
+							</SecondaryText>
+						</Column>
+					</Row>
+				</Panel>
 				<Calendar.Board/>
 			</Calendar>
 		</div>

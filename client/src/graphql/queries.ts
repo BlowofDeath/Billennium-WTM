@@ -4,6 +4,8 @@ import { UserFragment, ProjectFragment } from './fragments';
 export const UserScheduleQuery = gql`
 	query UserScheduleQuery($year: Int!, $month: Int!, $token: String!) {
 		month(year: $year, month: $month, token: $token) {
+			id,
+			status,
 			workTimeRecords {
 				from,
 				to,
@@ -41,7 +43,7 @@ export const ManagerProjectsQuery = gql`
 export const ManagerSettlementsQuery = gql`
 	query ManagerSettlementsQuery($token: String!, $year: Int!, $month: Int!) {
 		monthForAllUsers(token: $token, year: $year, month: $month) {
-			month, year, isClosed,
+			month, year, status,
 			user {
 				...UserFragment
 			},

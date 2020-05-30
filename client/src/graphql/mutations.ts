@@ -1,4 +1,5 @@
 import { gql } from 'apollo-boost';
+import { UserFragment } from './fragments';
 
 export const loginMutation = gql`
 	mutation Login($email: String!, $password: String!) {
@@ -45,6 +46,40 @@ export const CreateUserMutation = gql`
 			user {
 				first_name, last_name, role
 			}
+		}
+	}
+	${UserFragment}
+`;
+
+export const PatchUserMutation = gql`
+	mutation PatchUserMutation(
+		$token: String!,
+		$id: ID!,
+		$email: String,
+		$first_name: String,
+		$last_name: String,
+		$salary: Float,
+		$role: String,
+		$isActive: Boolean) {
+			updateUser(
+				token: $token,
+				id: $id,
+				email: $email,
+				first_name: $first_name,
+				last_name: $last_name,
+				role: $role,
+				salary: $salary,
+				isActive: $isActive) {
+					...UserFragment
+			}
+	}
+	${UserFragment}
+`;
+
+export const EmployeeSettlementMutation = gql`
+	mutation EmployeeSettlementMutation($id: ID!) {
+		updateMonthStatus(id: $id, status: AWAITING) {
+			id, status
 		}
 	}
 `;
