@@ -42,11 +42,16 @@ const ManagerSettlementPage: FC = () => {
 				</Row>
 			</Panel>
 			<Panel>
-				<h3>Oczekujące</h3>
-				<SettlementsList settlements={data.monthForAllUsers}/>
+				<h3>Do rozliczenia</h3>
+				<SettlementsList settlements={data.monthForAllUsers.filter((month: any) => month?.status === 'AWAITING')}/>
 			</Panel>
 			<Panel>
-				<h3>Zaległe</h3>
+				<h3>Rozliczone</h3>
+				<SettlementsList settlements={data.monthForAllUsers.filter((month: any) => month?.status === 'CLOSED')}/>
+			</Panel>
+			<Panel>
+				<h3>Otwarte</h3>
+				<SettlementsList settlements={data.monthForAllUsers.filter((month: any) => month?.status === 'OPEN')}/>
 			</Panel>
 		</Page>
 	)

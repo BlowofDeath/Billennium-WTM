@@ -19,7 +19,7 @@ const SettlementsList: FC<SettlementsListProps> = ({ settlements=[] }) => {
 		<Fragment>
 			{
 				settlements.map((settlement: Settlement, index: number) => {
-					const date = moment([settlement.year, settlement.month]);
+					const date = moment([settlement.year, settlement.month-1]);
 					/** time in minutes */
 					const time = aggregateWTRs(settlement.workTimeRecords);
 
