@@ -115,7 +115,7 @@ const monthResolver = {
       const month = await Month.findOne({ where: { id } });
       if (!month) throw new Error("Month is not exist");
       month.status = status;
-      await month.save;
+      await month.save();
       return month;
     },
   },
