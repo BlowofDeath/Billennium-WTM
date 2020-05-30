@@ -1,8 +1,9 @@
-import React, { FC, useReducer, useEffect, Fragment } from 'react';
+import React, { FC, useReducer, useEffect } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { ManagerProjectsQuery } from '../../graphql/queries';
 import { FaPlus } from 'react-icons/fa';
 import Panel from '../Panel/Panel';
+import moment from 'moment';
 import { Button, Backdrop } from '@material-ui/core';
 import ProjectCreationForm from '../ProjectCreationForm/ProjectCreationForm';
 import { useProjectCreationHandler } from './useProjectCreationHandler';
@@ -13,12 +14,17 @@ import { Project } from '../../core/Project';
 import { SecondaryText } from '../Atoms/SecondaryText';
 import { Column } from '../Atoms/Column';
 import { useProjectCloser } from './useProjectCloser';
+import { Row } from '../Atoms/Row';
+import { CustomExpansionPanel } from '../Atoms/CustomExpansionPanel';
 
 const ManagerProjects: FC = () => {
+	const now = moment();
 	const [isBackdropOpen, toggleBackdrop] = useReducer((state) => !state, false);
 	const { data, loading, error, refetch } = useQuery(ManagerProjectsQuery);
 	const [onProjectCreate, creationResult] = useProjectCreationHandler();
 	const { close, ...closeProjectResult } = useProjectCloser();
+	const activeProjects = data?.projects.filter((project: Project) => !project.isClosed);
+	const closedProjects = data?.projects.filter((project: Project) => project.isClosed);
 
 	useEffect(() => {
 		if (!creationResult.data) {
@@ -38,26 +44,41 @@ const ManagerProjects: FC = () => {
 				<Loader loading={creationResult.loading}/>
 			</Backdrop>
 
-			<h2>Projekty</h2>
 			<Panel>
-				<Button
-					variant="contained"
-					color="primary"
-					startIcon={<FaPlus/>}
-					onClick={toggleBackdrop}>
-					Dodaj 
-				</Button>
-				<Button
-					variant="outlined"
-					color="primary"
-					onClick={() => { generujpdf(data.projects, 5, 2020) }}>
-						Raport
-				</Button>
+				<Row>
+					<Column>
+						<h2>Projekty</h2>
+						<SecondaryText>
+							Zestawienie łączne przepracowanych godzin dla poszczególnych projektów
+						</SecondaryText>
+					</Column>
+					<Column>
+						<Row>
+							<Button
+								variant="outlined"
+								color="primary"
+								onClick={() => { generujpdf(data.projects, now.month() + 1, now.year()) }}>
+									Raport
+							</Button>
+							<Button
+								variant="contained"
+								color="primary"
+								startIcon={<FaPlus/>}
+								onClick={toggleBackdrop}>
+							Dodaj 
+							</Button>
+						</Row>
+					</Column>
+				</Row>
+				
 			</Panel>
-			<Panel>
-				<h3>Aktywne projekty</h3>
+
+			<CustomExpansionPanel
+				header={<h3>Aktywne projekty - { activeProjects.length }</h3>}
+				aria-controls="panel1a-content"
+				id="panel1a-header">
 				<ProjectList
-					projects={data.projects.filter((project: Project) => !project.isClosed)}
+					projects={activeProjects}
 					projectPostpendRender={(project: Project) => (
 						<Column style={{ paddingLeft: 30 }}>
 							<Button variant="outlined" color="primary" onClick={() => { close(project.id) }}>
@@ -66,11 +87,15 @@ const ManagerProjects: FC = () => {
 							<SecondaryText>Nie może zostać cofnięte!</SecondaryText>
 						</Column>
 					)}/>
-			</Panel>
-			<Panel>
-				<h3>Zarchiwizowane projekty</h3>
-				<ProjectList projects={data.projects.filter((project: Project) => project.isClosed)}/>
-			</Panel>
+			</CustomExpansionPanel>
+
+			<CustomExpansionPanel
+				header={<h3>Zarchiwizowane projekty - { closedProjects.length }</h3>}
+				aria-controls="panel1b-content"
+				id="panel1b-header">
+				
+				<ProjectList projects={closedProjects}/>
+			</CustomExpansionPanel>
 		</div>
 	)
 }

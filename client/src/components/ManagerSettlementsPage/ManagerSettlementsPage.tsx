@@ -1,16 +1,21 @@
-import React, { FC, useContext } from 'react'
-import Page from '../Page/Page';
 import { useQuery } from '@apollo/react-hooks';
+import { DatePicker } from '@material-ui/pickers';
+import moment, { Moment } from 'moment';
+import React, { FC, useContext } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 import { ManagerSettlementsQuery } from '../../graphql/queries';
-import moment from 'moment';
 import { Context } from '../App/Context';
-import SettlementsList from '../SettlementsList/SettlementsList';
-import Loader from '../Loader/Loader';
-import Panel from '../vendor/Panel/Panel';
-import { useLocation } from 'react-router-dom';
+import { Column } from '../Atoms/Column';
+import { CustomExpansionPanel } from '../Atoms/CustomExpansionPanel';
 import { Row } from '../Atoms/Row';
+import { SecondaryText } from '../Atoms/SecondaryText';
+import Loader from '../Loader/Loader';
+import Page from '../Page/Page';
+import SettlementsList from '../SettlementsList/SettlementsList';
+import Panel from '../vendor/Panel/Panel';
 
 const ManagerSettlementPage: FC = () => {
+	const history = useHistory();
 	const { search } = useLocation();
 	const query = new URLSearchParams(search);
 	const now = moment();
@@ -23,36 +28,70 @@ const ManagerSettlementPage: FC = () => {
 		}
 	});
 
-	console.log({ data });
-	
 	if (loading)
 		return <Loader loading={true}/>;
 	if (error)
 		return <span>Error...</span>;
-	if (data?.monthForAllUsers.length === 0)
-		return <span>No result case</span>;
+
+	const awaits = data.monthForAllUsers.filter((month: any) => month?.status === 'AWAITING');
+	const closed = data.monthForAllUsers.filter((month: any) => month?.status === 'CLOSED');
+	const opened = data.monthForAllUsers.filter((month: any) => month?.status === 'OPEN');
 
 	return (
 		<Page>
-			<h2>Rozliczenia</h2>
 			<Panel>
 				<Row>
-					<h3>Miesiąc - {month}</h3>
-					<span>{ data?.monthForAllUsers.isClosed ? "ZAMKNIĘTY" : "OTWARTY" }</span>
+					<Column>
+						<h2>Rozliczenia</h2>
+						<SecondaryText>
+							{ moment([year, month - 1]).format("YYYY MMMM") }
+						</SecondaryText>
+					</Column>
+					<Column>
+						<h3>Wybierz datę</h3>
+						<DatePicker
+							value={moment([year, month - 1])}
+							autoOk
+							views={['year', 'month']}
+							openTo="year"
+							onChange={(moment) => {
+								let year = moment?.year() ?? now.year();
+								let month = moment?.month() ?? now.month();
+								history.push(`/settlements?year=${year}&month=${month + 1}`);
+							}}/>
+					</Column>
 				</Row>
 			</Panel>
-			<Panel>
-				<h3>Do rozliczenia</h3>
-				<SettlementsList settlements={data.monthForAllUsers.filter((month: any) => month?.status === 'AWAITING')}/>
-			</Panel>
-			<Panel>
-				<h3>Rozliczone</h3>
-				<SettlementsList settlements={data.monthForAllUsers.filter((month: any) => month?.status === 'CLOSED')}/>
-			</Panel>
-			<Panel>
-				<h3>Otwarte</h3>
-				<SettlementsList settlements={data.monthForAllUsers.filter((month: any) => month?.status === 'OPEN')}/>
-			</Panel>
+
+			<CustomExpansionPanel
+				header={(
+					<Column>
+						<h3>Do rozliczenia - { awaits.length }</h3>
+						<SecondaryText>Miesiące oczekujące rozliczenia.</SecondaryText>
+					</Column>
+				)}>
+				<SettlementsList settlements={awaits}/>
+			</CustomExpansionPanel>
+
+			<CustomExpansionPanel
+				header={(
+					<Column>
+						<h3>Otwarte - { opened.length }</h3>
+						<SecondaryText>Miesiące, które nie zostały zgłoszone do rozliczenia.</SecondaryText>
+					</Column>
+				)}>
+				<SettlementsList settlements={opened}/>
+			</CustomExpansionPanel>
+
+			<CustomExpansionPanel
+				header={(
+					<Column>
+						<h3>Rozliczone - { closed.length }</h3>
+						<SecondaryText>Miesiące rozliczone.</SecondaryText>
+					</Column>
+				)}>
+				<SettlementsList settlements={closed}/>
+			</CustomExpansionPanel>
 		</Page>
 	)
 }
