@@ -21,7 +21,7 @@ export const UserScheduleQuery = gql`
 
 export const UserProjectsQuery = gql`
 	query UserProjectsQuery {
-		projects {
+		projects(isClosed: false) {
 			...ProjectFragment
 		}
 	}

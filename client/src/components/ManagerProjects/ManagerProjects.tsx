@@ -1,5 +1,4 @@
-import React, { FC, useReducer, useEffect } from 'react';
-import { StyledProjectItem, StyledProjectDescription, StyledProjectInfo } from './Atoms';
+import React, { FC, useReducer, useEffect, Fragment } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { ManagerProjectsQuery } from '../../graphql/queries';
 import { FaPlus } from 'react-icons/fa';
@@ -9,19 +8,23 @@ import ProjectCreationForm from '../ProjectCreationForm/ProjectCreationForm';
 import { useProjectCreationHandler } from './useProjectCreationHandler';
 import Loader from '../Loader/Loader';
 import { generujpdf } from '../../scripts/generatorPDF';
-import { aggregateWTRs } from '../../scripts/aggregateWTRs';
+import ProjectList from '../ProjectList/ProjectList';
+import { Project } from '../../core/Project';
+import { SecondaryText } from '../Atoms/SecondaryText';
+import { Column } from '../Atoms/Column';
+import { useProjectCloser } from './useProjectCloser';
 
 const ManagerProjects: FC = () => {
 	const [isBackdropOpen, toggleBackdrop] = useReducer((state) => !state, false);
 	const { data, loading, error, refetch } = useQuery(ManagerProjectsQuery);
 	const [onProjectCreate, creationResult] = useProjectCreationHandler();
+	const { close, ...closeProjectResult } = useProjectCloser();
 
 	useEffect(() => {
 		if (!creationResult.data) {
 			refetch();
 		}
-			
-	}, [creationResult.data, refetch]);
+	}, [creationResult.data, refetch, closeProjectResult.data]);
 
 	if (loading)
 		return <span>Loading...</span>;
@@ -52,29 +55,21 @@ const ManagerProjects: FC = () => {
 				</Button>
 			</Panel>
 			<Panel>
-			{
-				 data.projects.map((project: any, index: number) => {
-					project.id = parseInt(project.id);
-					let time = aggregateWTRs(project.workTimeRecords ?? []);
-
-					return (
-						<StyledProjectItem key={project.id}>
-							<StyledProjectInfo>
-								<span>{ project.name }</span>
-								<StyledProjectDescription>
-									{ project.description }
-								</StyledProjectDescription>
-							</StyledProjectInfo>
-							<div>
-								<div>Łączny czas pracy</div>
-								<StyledProjectDescription>
-									{ Math.floor(time / 60) }h { time % 60 }min
-								</StyledProjectDescription>
-							</div>
-						</StyledProjectItem>
-					)
-				})
-			}
+				<h3>Aktywne projekty</h3>
+				<ProjectList
+					projects={data.projects.filter((project: Project) => !project.isClosed)}
+					projectPostpendRender={(project: Project) => (
+						<Column style={{ paddingLeft: 30 }}>
+							<Button variant="outlined" color="primary" onClick={() => { close(project.id) }}>
+								Archiwizuj
+							</Button>
+							<SecondaryText>Nie może zostać cofnięte!</SecondaryText>
+						</Column>
+					)}/>
+			</Panel>
+			<Panel>
+				<h3>Zarchiwizowane projekty</h3>
+				<ProjectList projects={data.projects.filter((project: Project) => project.isClosed)}/>
 			</Panel>
 		</div>
 	)

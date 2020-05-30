@@ -1,5 +1,5 @@
 import { gql } from 'apollo-boost';
-import { UserFragment } from './fragments';
+import { UserFragment, ProjectFragment } from './fragments';
 
 export const loginMutation = gql`
 	mutation Login($email: String!, $password: String!) {
@@ -78,6 +78,15 @@ export const PatchUserMutation = gql`
 			}
 	}
 	${UserFragment}
+`;
+
+export const PatchProjectMutation = gql`
+	mutation PatchProjectMutation($id: ID!, $name: String, $description: String, $isClosed: Boolean) {
+		updateProject(id: $id, name: $name, description: $description, isClosed: $isClosed) {
+			...ProjectFragment
+		}
+	}
+	${ProjectFragment}
 `;
 
 export const EmployeeSettlementMutation = gql`
