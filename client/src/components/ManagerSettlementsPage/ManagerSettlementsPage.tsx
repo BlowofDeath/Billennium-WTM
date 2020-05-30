@@ -10,13 +10,12 @@ import Panel from '../vendor/Panel/Panel';
 import { useLocation } from 'react-router-dom';
 import { Row } from '../Atoms/Row';
 
-const ManagerSettlementPage: FC = ({}) => {
+const ManagerSettlementPage: FC = () => {
 	const { search } = useLocation();
 	const query = new URLSearchParams(search);
 	const now = moment();
 	const year = query.get('year') ? parseInt(query.get('year') as string) : now.year();
 	const month = query.get('month') ? parseInt(query.get('month') as string) : now.month() + 1;
-
 	const { token } = useContext(Context);
 	const { data, loading, error } = useQuery(ManagerSettlementsQuery, {
 		variables: {

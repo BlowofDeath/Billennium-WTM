@@ -55,7 +55,10 @@ const userResolver = {
 
       return "Succes";
     },
-    signup: async (_, { role, email, password, first_name, last_name }) => {
+    signup: async (
+      _,
+      { role, email, password, first_name, last_name, salary, isActive }
+    ) => {
       const exist = await User.findOne({ where: { email } });
       if (exist) throw new Error("User exist");
       if (!validator.isEmail(email))
@@ -75,8 +78,8 @@ const userResolver = {
         password,
         first_name,
         last_name,
-        salary: null,
-        isActive: true,
+        salary: salary || null,
+        isActive: isActive || true,
       });
 
       const token = signJWT(user.id);
@@ -98,7 +101,7 @@ const userResolver = {
     },
     updateUser: async (
       _,
-      { token, id, email, first_name, last_name, salary, isActive }
+      { token, id, email, first_name, last_name, salary, isActive, role }
     ) => {
       const { userId } = verifyJWT(token);
       if (!userId) throw new AuthenticationError("Incorrect token");
@@ -129,8 +132,15 @@ const userResolver = {
       }
       if (salary) userUpdate.salary = salary;
       if (isActive) userUpdate.isActive = isActive;
+      if (role) userUpdate.role = role;
       await userUpdate.save();
       return userUpdate;
+    },
+    removeUser: async (_, { id }) => {
+      const user = await User.findOne({ where: { id } });
+      if (!user) return null;
+      await User.destroy({ where: { id } });
+      return user;
     },
   },
 };

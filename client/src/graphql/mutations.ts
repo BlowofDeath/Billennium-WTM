@@ -6,13 +6,11 @@ export const loginMutation = gql`
 		login(email: $email, password: $password) {
 			token,
 			user {
-				email,
-				first_name,
-				last_name,
-				role
+				...UserFragment
 			}
 		}
 	}
+	${UserFragment}
 `;
 
 export const StartTimeRecordingMutation = gql`
@@ -39,12 +37,18 @@ export const CreateProjectMutation = gql`
 `;
 
 export const CreateUserMutation = gql`
-	mutation CreateUserMutation($email: String!, $password: String!, $first_name: String!, $last_name: String!, $role: String!) {
+	mutation CreateUserMutation($email: String!, $password: String!, $first_name: String!, $last_name: String!, $role: String!, $salary: Int!, $isActive: Boolean!) {
 		signup(
-			email: $email, password: $password, first_name: $first_name, last_name: $last_name, role: $role
+			email: $email,
+			password: $password,
+			first_name: $first_name,
+			salary: $salary,
+			last_name: $last_name,
+			role: $role,
+			isActive: $isActive
 		) {
 			user {
-				first_name, last_name, role
+				...UserFragment
 			}
 		}
 	}

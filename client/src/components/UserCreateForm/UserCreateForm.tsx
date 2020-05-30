@@ -1,18 +1,33 @@
-import React, { FC, useState, useEffect } from 'react';
-import { FormControl, TextField, Button, Select, MenuItem } from '@material-ui/core';
+import React, { FC, useState, useEffect, SyntheticEvent, useContext } from 'react';
+import { FormControl, TextField, Button, Select, MenuItem, Switch } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 import EmailField from '../EmailField/EmailField';
 import PasswordField from '../PasswordField/PasswordField';
 import { useFormCreateHandler } from './useFormCreateHandler';
 import Loader from '../Loader/Loader';
+import { useUserUpdater } from './useUserUpdater';
+import { User } from '../../core/User';
+import { Context } from '../App/Context';
 
 const StyledForm = styled('form')({
 	position: "relative",
 	zIndex: 101,
 	background: "#fff",
 	padding: "40px",
+	display: "flex",
+	alignItems: "center",
+	flexDirection: "column",
+	justifyContent: "center",
+	width: "350px",
 	"& > *": {
-		marginBottom: "20px"
+		width: "100%"
+	},
+	"& > h2": {
+		textAlign: "center"
+	},
+	"& .MuiInput-root": {
+		marginBottom: "10px",
+		width: "100%"
 	}
 })
 
@@ -21,7 +36,9 @@ export interface FormData {
 	email: 		string,
 	password: 	string,
 	first_name: string,
-	last_name: 	string
+	last_name: 	string,
+	salary: 	number,
+	isActive: 	boolean
 }
 
 export interface UserCreateFormProps {
@@ -54,18 +71,26 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	},
 	userData
 }) => {
-	const { signup, data, error, loading } = useFormCreateHandler();
-	const [formData, setFormData] = useState<FormData>(userData ?? {
+	const defaultData: FormData = {
 		role: 		"Pracownik",
 		email: 		"",
 		password: 	"",
 		first_name: "",
-		last_name: 	""
-	});
-	
-	const _handleConfirm = () => {
+		last_name: 	"",
+		salary: 	0,
+		isActive: 	true
+	}
+	const { token } = useContext(Context);
+	const { update, ...updateResult } = useUserUpdater();
+	const { signup, data, error, loading } = useFormCreateHandler();
+	const [formData, setFormData] = useState<FormData>(userData ?? defaultData);
+
+	const _handleConfirm = (e: SyntheticEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		e.stopPropagation();
 		// use update handler
-		if (userData) {
+		if (userData && token) {
+			update(userData as unknown as User, formData as unknown as User, token as string);
 			return;
 		}
 		// use create handler
@@ -78,6 +103,8 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	useEffect(() => {
 		if (userData)
 			setFormData(userData);
+		else
+			setFormData(defaultData);
 	}, [userData]);
 
 	useEffect(() => {
@@ -87,14 +114,16 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	return (
 		<StyledForm onClick={(e) => { e.stopPropagation() }} onSubmit={_handleConfirm}>
 			<Loader loading={loading}/>
+			<h2>{ userData ? label.edit : label.create }</h2>
 			<FormControl>
-				<h2>{ userData ? label.edit : label.create }</h2>
 				<EmailField
+					initialValue={userData?.email}
 					helperText="Nieprawidłowy adres email"
 					label="email"
 					onEmail={(email: string | null) => { setFormData({ ...formData, email: email ? email : "" }) }}/>
 				
 				<PasswordField
+					initialValue={""}
 					required={userData ? false : true }
 					label="hasło"
 					onPassword={(password: string | null) => { setFormData({ ...formData, password: password ? password : "" }) }}/>
@@ -112,6 +141,20 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 					type="text"
 					label="nazwisko"
 					onChange={(e) => { setFormData({ ...formData, last_name: e.target.value.trim() }) }}/>
+
+				<TextField
+					InputLabelProps={{
+						shrink: true
+					}}
+					value={formData.salary ?? 0}
+					required
+					type="number"
+					label="stawka"
+					onChange={(e) => { setFormData({ ...formData, salary: parseInt(e.target.value || "0") })} }/>
+
+				<Switch
+					checked={formData.isActive}
+					onChange={() => { setFormData({ ...formData, isActive: !formData.isActive }) }}/>
 
 				<Select
 					value={formData.role}
