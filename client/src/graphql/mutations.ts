@@ -62,8 +62,8 @@ export const PatchUserMutation = gql`
 		$email: String,
 		$first_name: String,
 		$last_name: String,
-		$salary: Float,
-		$role: String,
+		$salary: Int,
+		$role: Role,
 		$isActive: Boolean) {
 			updateUser(
 				token: $token,
