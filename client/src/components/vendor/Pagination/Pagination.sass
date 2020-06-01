@@ -1,0 +1,55 @@
+$pagination_page-bg: 				#f1f1f1
+$pagination_page-active-bg: 		#333333
+$pagination_page-active-color: 		#f1f1f1
+$pagination_page-hover-bg: 			#afafaf
+$pagination_page-active-hover-bg: 	#333333
+
+// @import "../../theme.sass"
+
+.Pagination
+	display: flex
+	align-items: center
+	justify-content: space-between
+	font-size: 1rem
+	user-select: none
+	width: min-content
+
+	.pagination__page
+		transition: all 0.2s ease-in-out
+		cursor: pointer
+		background: $pagination_page-bg
+		padding: 5px 8px
+		margin: 0 1px
+		border-radius: 1px
+
+	.pagination__page:hover
+		background: $pagination_page-hover-bg
+
+	.pagination__control
+		transition: all 0.2s ease-in-out
+		cursor: pointer
+		font-size: 2rem
+		border-radius: 50%
+
+	.pagination__control:hover
+		background: #333333
+		color: #f1f1f1
+
+	.page-active
+		background: $pagination_page-active-bg
+		color: $pagination_page-active-color
+
+	.page-active:hover
+		background: $pagination_page-active-hover-bg
+
+	.page-container, .pagination__pre, .pagination__post
+		display: flex
+		align-items: center
+		justify-content: center
+
+	.flex, .dots
+		display: flex
+
+	.dots
+		padding-bottom: 4px
+		align-items: flex-end
