@@ -58,6 +58,16 @@ export interface UserCreateFormProps {
 	}
 }
 
+const defaultData: FormData = {
+	role: 		"Pracownik",
+	email: 		"",
+	password: 	"",
+	first_name: "",
+	last_name: 	"",
+	salary: 	0,
+	isActive: 	true
+}
+
 /** UserCreateForm */
 const UserCreateForm: FC<UserCreateFormProps> = ({
 	onCreateUser=function(){},
@@ -71,15 +81,6 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	},
 	userData
 }) => {
-	const defaultData: FormData = {
-		role: 		"Pracownik",
-		email: 		"",
-		password: 	"",
-		first_name: "",
-		last_name: 	"",
-		salary: 	0,
-		isActive: 	true
-	}
 	const { token } = useContext(Context);
 	const { update } = useUserUpdater();
 	const { signup, data, error, loading } = useFormCreateHandler();
