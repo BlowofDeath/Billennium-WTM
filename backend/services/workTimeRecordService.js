@@ -21,7 +21,7 @@ const stopWTR = async (userId) => {
     },
     order: [["createdAt", "DESC"]],
   });
-  //Sprawdza czy ostatni wtr istnieje i czy jest zakończczony
+  //Sprawdza czy ostatni wtr istnieje i czy jest zakończczony//
   if (!wtr) return null;
   if (wtr.to != null) return null;
   const now = moment();
