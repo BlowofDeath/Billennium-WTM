@@ -32,32 +32,9 @@ const userResolver = {
     },
   },
   Mutation: {
-    logout: async (_, { token }) => {
-      const { userId } = verifyJWT(token);
-      if (!userId) throw new AuthenticationError("Incorrect token");
-      const month = await Month.findOne({
-        where: {
-          userId,
-        },
-        order: [["createdAt", "DESC"]],
-      });
-
-      const wtr = await WorkTimeRecord.findOne({
-        where: {
-          monthId: month.id,
-        },
-        order: [["createdAt", "DESC"]],
-      });
-
-      const now = moment().valueOf();
-      wtr.to = now;
-      await wtr.save();
-
-      return "Succes";
-    },
     signup: async (
       _,
-      { role, email, password, first_name, last_name, salary, isActive }
+      { role, email, password, first_name, last_name, isActive }
     ) => {
       const exist = await User.findOne({ where: { email } });
       if (exist) throw new Error("User exist");
@@ -78,7 +55,6 @@ const userResolver = {
         password,
         first_name,
         last_name,
-        salary: salary || null,
         isActive: isActive || true,
       });
 
@@ -92,6 +68,7 @@ const userResolver = {
         throw new UserInputError("Wrong email adress");
       const user = await User.findOne({ where: { email } });
       if (!user) throw new Error("User not found");
+      if (!user.isActive) throw new Error("User isn't active");
       const resoult = bcrypt.compareSync(password, user.password);
       if (!resoult) throw new UserInputError("Password incorrect");
 
@@ -101,10 +78,12 @@ const userResolver = {
     },
     updateUser: async (
       _,
-      { token, id, email, first_name, last_name, salary, isActive, role }
+      { id, email, first_name, last_name, isActive, role },
+      { auth }
     ) => {
-      const { userId } = verifyJWT(token);
-      if (!userId) throw new AuthenticationError("Incorrect token");
+      if (!auth) throw new AuthenticationError("Incorrect token");
+      const { userId } = auth;
+
       const user = await User.findOne({ where: { id: userId } });
       if (!user) throw new Error("User not found");
       const userUpdate = await User.findOne({ where: { id } });
@@ -130,17 +109,10 @@ const userResolver = {
           throw new UserInputError("Last name must have at least 3 characters");
         userUpdate.last_name = last_name;
       }
-      if (salary) userUpdate.salary = salary;
-      if (isActive) userUpdate.isActive = isActive;
+      if (isActive != undefined) userUpdate.isActive = isActive;
       if (role) userUpdate.role = role;
       await userUpdate.save();
       return userUpdate;
-    },
-    removeUser: async (_, { id }) => {
-      const user = await User.findOne({ where: { id } });
-      if (!user) return null;
-      await User.destroy({ where: { id } });
-      return user;
     },
   },
 };

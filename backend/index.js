@@ -1,9 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { ApolloServer } from "apollo-server";
 import typeDefs from "./typeDefs/typeDefs";
 import resolvers from "./resolvers/resolvers";
 import db from "./configs/database";
-import dotenv from "dotenv";
-dotenv.config();
+import { verifyJWT } from "./middleware/jwtTool";
 
 async function startServer() {
   await db
@@ -27,6 +28,15 @@ async function startServer() {
     // formatError: (err) => {
     //   return err.message;
     // },
+    context: ({ req }) => {
+      const auth = req.headers.authorization
+        ? verifyJWT(req.headers.authorization)
+        : null;
+      if (auth != null && !auth.userId) throw new Error("Incorrect token");
+      return {
+        auth,
+      };
+    },
   });
 
   // The `listen` method launches a web server.

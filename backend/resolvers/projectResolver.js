@@ -35,7 +35,7 @@ const projectResolver = {
       const project = await Project.findOne({ where: { id } });
       if (name) project.name = name;
       if (description) project.description = description;
-      if (isClosed) project.isClosed = isClosed;
+      if (isClosed != undefined) project.isClosed = isClosed;
       await project.save();
       return project;
     },

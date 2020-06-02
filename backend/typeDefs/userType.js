@@ -13,33 +13,27 @@ const userType = gql`
     first_name: String!
     last_name: String!
     projects: [Project]
-    salary: Int
     isActive: Boolean!
   }
 
   type Mutation {
     signup(
-      role: String!
+      role: Role!
       email: String!
       password: String!
       first_name: String!
       last_name: String!
-      salary: Int
       isActive: Boolean
     ): Auth
     login(email: String!, password: String!): Auth
-    logout(token: String!): String!
     updateUser(
-      token: String!
       id: ID!
       email: String
       first_name: String
       last_name: String
-      salary: Int
       isActive: Boolean
       role: Role
     ): User!
-    removeUser(id: ID!): User
   }
 
   type Auth {

@@ -17,16 +17,15 @@ const workTimeRecordType = gql`
   }
 
   type Mutation {
-    startWorkTimeRecord(token: String!, projectId: ID!): WorkTimeRecord
-    stopWorkTimeRecord(token: String!): WorkTimeRecord
+    startWorkTimeRecord(projectId: ID!): WorkTimeRecord
+    stopWorkTimeRecord: WorkTimeRecord
     updateWorkTimeRecord(
-      token: String!
       id: ID!
       day: Int!
       from: String!
       to: String!
     ): WorkTimeRecord!
-    removeWorkTimeRecord(token: String!, id: ID!): String!
+    removeWorkTimeRecord(id: ID!): WorkTimeRecord
   }
 `;
 
