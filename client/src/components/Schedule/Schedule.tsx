@@ -72,8 +72,8 @@ const Schedule: FC = () => {
 		let ev: CalendarRenderableEvent = {
 			render: (index: number, date: number) => (
 				<EventBlock key={index}>
-					{ wtrFrom.format("HH:mm") } - { wtrTo.format("HH:mm") }<br/>
-					{ record.project.name }
+					<span>{ wtrFrom.format("HH:mm") } - { wtrTo.format("HH:mm") }</span>
+					<span>{ record.project.name }</span>
 				</EventBlock>
 			),
 			date: moment([wtrFrom.year(), wtrFrom.month(), record.day]).valueOf()

@@ -18,6 +18,11 @@ export const StyledDay = styled.li<{ timeline: boolean }>`
 	flex-direction: ${({timeline}) => timeline ? "row" : "column"};
 	justify-content: ${({timeline}) => timeline ? "flex-start" : "flex-end"};
 
+	> div {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
 	&:hover {
 		background: #f2f2ff;
 	}

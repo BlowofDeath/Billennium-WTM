@@ -22,14 +22,16 @@ const Day: FC<IProps> = ({ date, events, timeline }) => {
 					{ timeline && day.format('ddd') }
 				</span>
 			</StyledDayNumber>
-			{
-				events.map((event: CalendarEvent | CalendarRenderableEvent, index: number) => {
-					if (isRenderableEvent(event)) {
-						return (event as CalendarRenderableEvent).render(index, event.date);
-					}
-					return event.title;
-				})
-			}
+			<div>
+				{
+					events.map((event: CalendarEvent | CalendarRenderableEvent, index: number) => {
+						if (isRenderableEvent(event)) {
+							return (event as CalendarRenderableEvent).render(index, event.date);
+						}
+						return event.title;
+					})
+				}
+			</div>
 		</StyledDay>
 	)
 }
