@@ -3,6 +3,9 @@ import { WorkTimeRecord } from "../core/WorkTimeRecord";
 
 /** Aggregate time returns work time in minutes */
 export const aggregateWTRs = (workTimeHours: Array<WorkTimeRecord>) => {
+	if (!workTimeHours)
+		return 0;
+		
 	let sum = 0;
 
 	for (let i = 0; i < workTimeHours.length; i++) {
