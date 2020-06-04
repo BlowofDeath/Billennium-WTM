@@ -34,7 +34,20 @@ const AdminUsersPage: FC = () => {
 								setIsModalVisible(true);
 							}}
 							onCreate={() => { setIsModalVisible(true) }}
-							createButton={ <Button variant="outlined" color="primary">Nowy użytkownik</Button> }/> }
+							createButton={ <Button variant="outlined" color="primary">Nowy użytkownik</Button> }
+							map={{
+								first_name: "Imię",
+								last_name: "Nazwisko",
+								__typename: "Typ",
+								role: "Rola",
+								email: "Email",
+								isActive: "Aktywny",
+								salary: "Stawka"
+							}}
+							booleans={{
+								true: "Tak",
+								false: "Nie"
+							}}/> }
 			</Panel>
 		</Fragment>
 	)
