@@ -39,12 +39,20 @@ const ProjectCreationForm: FC<ProjectCreationFormProps> = ({ onCreate, onUpdate,
 	}, [data]);
 
 	useEffect(() => {
-		onCreate(createResult.data, createResult.error, createResult.loading);
-	}, [createResult]);
+		let mounted = true;
+		if (mounted) {
+			onUpdate(updateResult.data, updateResult.error, updateResult.loading)
+		}
+		return () => { mounted = false };
+	}, [updateResult?.data, updateResult?.error, updateResult?.loading]);
 
 	useEffect(() => {
-		onUpdate(updateResult.data, updateResult.error, updateResult.loading);
-	}, [updateResult]);
+		let mounted = true;
+		if (mounted) {
+			onCreate(createResult?.data, createResult?.error, createResult?.loading);
+		}
+		return () => { mounted = false };
+	}, [createResult?.data, createResult?.error, createResult?.loading])
 
 	const _onSubmitHandler = (e: SyntheticEvent<HTMLFormElement>) => {
 		e.preventDefault();

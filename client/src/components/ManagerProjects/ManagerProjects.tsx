@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useEffect, useState } from 'react';
+import React, { FC, useReducer, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { ManagerProjectsQuery } from '../../graphql/queries';
 import { FaPlus } from 'react-icons/fa';
@@ -6,8 +6,6 @@ import Panel from '../Panel/Panel';
 import moment from 'moment';
 import { Button, Backdrop } from '@material-ui/core';
 import ProjectCreationForm from '../ProjectCreationForm/ProjectCreationForm';
-import { useProjectCreationHandler } from './useProjectCreationHandler';
-import Loader from '../Loader/Loader';
 import { generujpdf } from '../../scripts/generatorPDF';
 import ProjectList from '../ProjectList/ProjectList';
 import { Project } from '../../core/Project';
@@ -16,29 +14,21 @@ import { Column } from '../Atoms/Column';
 import { useProjectCloser } from './useProjectCloser';
 import { Row } from '../Atoms/Row';
 import { CustomExpansionPanel } from '../Atoms/CustomExpansionPanel';
-import { useProjectUpdateHandler } from './useProjectUpdateHandler';
 
 const ManagerProjects: FC = () => {
 	const now = moment();
 	const [editProjectData, setEditProjectData] = useState<Project | null>(null);
 	const [isBackdropOpen, toggleBackdrop] = useReducer((state) => !state, false);
-	const { data, loading, error, refetch } = useQuery(ManagerProjectsQuery);
+	const { data, loading, error } = useQuery(ManagerProjectsQuery);
 	
 	const { close, ...closeProjectResult } = useProjectCloser();
 	const activeProjects = data?.projects.filter((project: Project) => !project.isClosed);
 	const closedProjects = data?.projects.filter((project: Project) => project.isClosed);
 
-	useEffect(() => {
-		if (closeProjectResult.data) {
-			refetch();
-		}
-	}, [refetch, closeProjectResult.data]);
-
 	const _handleCreateOrUpdate = (data: any, error: any, loading: boolean) => {
 		if (!loading && (data || error)) {
 			toggleBackdrop();
 			setEditProjectData(null);
-			refetch();
 		}
 	}
 
@@ -50,12 +40,10 @@ const ManagerProjects: FC = () => {
 	return (
 		<div>
 			<Backdrop open={isBackdropOpen} onClick={toggleBackdrop} style={{ zIndex: 2000 }}>
-				{/* Removing this condition will cause recursive call!!! Do not remove */}
-				{ isBackdropOpen && <ProjectCreationForm
+				<ProjectCreationForm
 					data={editProjectData}
 					onCreate={_handleCreateOrUpdate}
 					onUpdate={_handleCreateOrUpdate}/>
-				}
 			</Backdrop>
 
 			<Panel>
