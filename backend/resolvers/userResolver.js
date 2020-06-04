@@ -7,7 +7,7 @@ import { UserInputError, AuthenticationError } from "apollo-server";
 import validator from "validator";
 import { signJWT, verifyJWT } from "../middleware/jwtTool";
 import moment from "moment";
-import { QueryTypes } from "sequelize";
+import { QueryTypes, Op } from "sequelize";
 import db from "../configs/database";
 
 const userResolver = {
@@ -29,6 +29,18 @@ const userResolver = {
         `SELECT DISTINCT u.id FROM projects AS p LEFT JOIN worktimerecords AS w ON p.id = w.projectid LEFT JOIN months AS m ON w.monthid = m.id LEFT JOIN users AS u ON m.userid = u.id WHERE u.id = ${id}`,
         { type: QueryTypes.SELECT }
       );
+    },
+    activeWorkTimeRecord: async ({ id }, args) => {
+      const workTimeRecord = await WorkTimeRecord.findOne({
+        where: { to: null },
+        include: [
+          {
+            model: Month,
+            where: { userId: id },
+          },
+        ],
+      });
+      return workTimeRecord;
     },
   },
   Mutation: {
@@ -92,9 +104,10 @@ const userResolver = {
       if (email) {
         if (!validator.isEmail(email))
           throw new UserInputError("Wrong email adress");
-        const emailUsed = User.findOne({ where: { email } });
-        if (emailUsed && emailUsed.id != id)
-          throw new Error("Email already used");
+        const emailUsed = await User.findOne({
+          where: { email, id: { [Op.ne]: id } },
+        });
+        if (emailUsed) throw new Error("Email already used");
         userUpdate.email = email;
       }
       if (first_name) {

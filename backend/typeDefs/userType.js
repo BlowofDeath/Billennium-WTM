@@ -14,6 +14,7 @@ const userType = gql`
     last_name: String!
     projects: [Project]
     isActive: Boolean!
+    activeWorkTimeRecord: WorkTimeRecord
   }
 
   type Mutation {

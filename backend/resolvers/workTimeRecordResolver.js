@@ -3,10 +3,8 @@ import WorkTimeRecord from "../models/WorkTimeRecord";
 import { UserInputError, AuthenticationError } from "apollo-server";
 import validator from "validator";
 import moment from "moment";
-import { verifyJWT } from "../middleware/jwtTool";
 import User from "../models/User";
 import Project from "../models/Project";
-import { stopWTR } from "../services/workTimeRecordService";
 
 const workTimeRecordResolver = {
   Query: {
@@ -92,19 +90,19 @@ const workTimeRecordResolver = {
         },
         order: [["createdAt", "DESC"]],
       });
-      //Sprawdza czy ostatni wtr istnieje i czy jest zakończczony
+      //Sprawdza czy ostatni wtr istnieje i czy jest zakończczony//
       if (!wtr) return null;
       if (wtr.to != null) return null;
       const now = moment();
       wtr.to = now;
-      if (now.valueOf() - wtr.from.valueOf() >= 60000) {
+      const minimalWTRTime = process.env.MINIMAL_WTR_TIME || 5;
+      if (now.valueOf() - wtr.from.valueOf() >= 1000 * 60 * minimalWTRTime) {
         await wtr.save();
         return wtr;
       } else {
         WorkTimeRecord.destroy({ where: { id: wtr.id } });
         return null;
       }
-      return stopWTR(userId);
     },
     updateWorkTimeRecord: async (_, { id, day, from, to }) => {
       const wtr = await WorkTimeRecord.findOne({ where: { id } });

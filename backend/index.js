@@ -29,9 +29,13 @@ async function startServer() {
     //   return err.message;
     // },
     context: ({ req }) => {
-      const auth = req.headers.authorization
-        ? verifyJWT(req.headers.authorization)
-        : null;
+      let auth = null;
+      try {
+        if (req.headers.authorization) {
+          const jwt = verifyJWT(req.headers.authorization);
+          auth = jwt || null;
+        }
+      } catch (err) {}
       if (auth != null && !auth.userId) throw new Error("Incorrect token");
       return {
         auth,
