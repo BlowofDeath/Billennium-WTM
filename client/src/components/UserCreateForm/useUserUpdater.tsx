@@ -3,7 +3,7 @@ import { PatchUserMutation } from "../../graphql/mutations";
 import { User } from "../../core/User";
 
 export const useUserUpdater = () => {
-	const [update, { data, loading, error }] = useMutation(PatchUserMutation);
+	const [update, { data, loading, error }] = useMutation(PatchUserMutation, { errorPolicy: 'all', onError: () => {} });
 
 	return {
 		update: (original: User, user: User, token: string) => {

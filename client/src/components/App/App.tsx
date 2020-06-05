@@ -6,6 +6,7 @@ import { ApolloClient } from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
+import { onError } from 'apollo-link-error';
 import React, { Component } from 'react';
 import { AUTH_TOKEN, TASK, USER } from '../../constants';
 import defaultTheme from '../../themes/default';
@@ -16,6 +17,8 @@ import './App.sass';
 import { Context, defaultContextValue } from './Context';
 import moment from 'moment';
 import 'moment/locale/pl';
+import { ApolloLink } from 'apollo-link';
+
 
 moment.locale('pl');
 
@@ -26,6 +29,14 @@ const httpLink = createHttpLink({
 	uri: `http://${hostname}:4000`
 })
 
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+	if (graphQLErrors)
+		graphQLErrors.forEach(({ message, locations, path }) =>
+		console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+	);
+	if (networkError) console.log(`[Network error]: ${networkError}`);
+});
+
 const authLink = setContext((_, { headers }) => {
 	const token = localStorage.getItem(AUTH_TOKEN);
 
@@ -35,13 +46,19 @@ const authLink = setContext((_, { headers }) => {
 	}
 
 	return {
-		...headers,
-		authorization: token ? token : ""
+		headers: {
+			...headers,
+			authorization: token ? `${token}` : ""
+		}
 	}
 })
 
+const link = ApolloLink.from([
+	authLink, errorLink, httpLink
+])
+
 const client = new ApolloClient({
-	link: authLink.concat(httpLink),
+	link,
 	cache: new InMemoryCache()
 })
 

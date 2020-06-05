@@ -8,6 +8,7 @@ import Loader from '../Loader/Loader';
 import { useUserUpdater } from './useUserUpdater';
 import { User } from '../../core/User';
 import { Context } from '../App/Context';
+import { useApolloErrorHandler } from '../../hoc/useApolloErrorHandler';
 
 const StyledForm = styled('form')({
 	position: "relative",
@@ -80,9 +81,10 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	userData
 }) => {
 	const { token } = useContext(Context);
-	const { update } = useUserUpdater();
+	const { update, ...updateResult } = useUserUpdater();
 	const { signup, data, error, loading } = useFormCreateHandler();
 	const [formData, setFormData] = useState<FormData>(userData ?? defaultData);
+	const { handleError } = useApolloErrorHandler();
 
 	const _handleConfirm = (e: SyntheticEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -98,6 +100,11 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 
 		signup(formData);
 	}
+
+	useEffect(() => {
+		if (updateResult.error)
+			handleError(updateResult.error);
+	}, [updateResult.error])
 
 	useEffect(() => {
 		if (userData)

@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks';
 import { DatePicker } from '@material-ui/pickers';
 import moment from 'moment';
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { ManagerSettlementsQuery } from '../../graphql/queries';
 import { Context } from '../App/Context';
@@ -17,8 +17,12 @@ import { Settlement } from '../../core/Settlements';
 import { AcceptButton } from '../Atoms/AcceptButton';
 import { DeclineButton } from '../Atoms/DeclineButton';
 import { useMonthStatusHandler } from './useMonthStatusHandler';
+import { useToasts } from 'react-toast-notifications';
+import { mapError } from '../../scripts/errorMap';
+import { useApolloErrorHandler } from '../../hoc/useApolloErrorHandler';
 
 const ManagerSettlementPage: FC = () => {
+	const { addToast } = useToasts();
 	const history = useHistory();
 	const { search } = useLocation();
 	const query = new URLSearchParams(search);
@@ -32,6 +36,9 @@ const ManagerSettlementPage: FC = () => {
 			year, month, token
 		}
 	});
+	const { handleError } = useApolloErrorHandler();
+
+	useEffect(() => { handleError(error) }, [error]);
 
 	if (loading)
 		return <Loader loading={true}/>;

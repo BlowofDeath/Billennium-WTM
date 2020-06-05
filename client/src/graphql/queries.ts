@@ -2,8 +2,8 @@ import { gql } from 'apollo-boost';
 import { UserFragment, ProjectFragment } from './fragments';
 
 export const UserScheduleQuery = gql`
-	query UserScheduleQuery($year: Int!, $month: Int!, $token: String!) {
-		month(year: $year, month: $month, token: $token) {
+	query UserScheduleQuery($year: Int!, $month: Int!) {
+		month(year: $year, month: $month) {
 			id,
 			status,
 			workTimeRecords {
