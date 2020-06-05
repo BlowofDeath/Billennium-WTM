@@ -2,7 +2,10 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { ThemeProvider } from '@material-ui/styles';
-import ApolloClient from 'apollo-boost';
+import { ApolloClient } from 'apollo-client';
+import { createHttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { setContext } from 'apollo-link-context';
 import React, { Component } from 'react';
 import { AUTH_TOKEN, TASK, USER } from '../../constants';
 import defaultTheme from '../../themes/default';
@@ -16,10 +19,30 @@ import 'moment/locale/pl';
 
 moment.locale('pl');
 
-// import darkTheme from '../../themes/dark';
+const ENV = process.env.NODE_ENV;
+const { hostname } = window.location;
+
+const httpLink = createHttpLink({
+	uri: `http://${hostname}:4000`
+})
+
+const authLink = setContext((_, { headers }) => {
+	const token = localStorage.getItem(AUTH_TOKEN);
+
+	if (ENV === 'development') {
+		console.log(`OP: ${_?.operationName}`)
+		console.log(`REQUEST: %s`, token)
+	}
+
+	return {
+		...headers,
+		authorization: token ? token : ""
+	}
+})
 
 const client = new ApolloClient({
-	uri: 'http://192.168.1.101:4000'
+	link: authLink.concat(httpLink),
+	cache: new InMemoryCache()
 })
 
 class App extends Component {
