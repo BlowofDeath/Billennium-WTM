@@ -29,7 +29,7 @@ export const StopTimeRecordingMutation = gql`
 `;
 
 export const CreateProjectMutation = gql`
-	mutation CreateProjectMutation($name: String!, $description: String!) {
+	mutation CreateProjectMutation($name: String!, $description: String!, $isPinned: Boolean) {
 		addProject(name: $name, description: $description) {
 			name, description
 		}
@@ -76,8 +76,8 @@ export const PatchUserMutation = gql`
 `;
 
 export const PatchProjectMutation = gql`
-	mutation PatchProjectMutation($id: ID!, $name: String, $description: String, $isClosed: Boolean) {
-		updateProject(id: $id, name: $name, description: $description, isClosed: $isClosed) {
+	mutation PatchProjectMutation($id: ID!, $name: String, $description: String, $isClosed: Boolean, $isPinned: Boolean) {
+		updateProject(id: $id, name: $name, description: $description, isClosed: $isClosed, isPinned: $isPinned) {
 			...ProjectFragment
 		}
 	}

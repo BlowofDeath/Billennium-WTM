@@ -16,6 +16,7 @@ export const ProjectFragment = gql`
 		id,
 		name,
 		description,
-		isClosed
+		isClosed,
+		isPinned
 	}
 `;

@@ -3,7 +3,7 @@ import { PatchProjectMutation } from "../../graphql/mutations";
 import { Project } from "../../core/Project";
 import { useState, useEffect } from "react";
 
-type ProjectUpdateHandlerType = [(original: Project, project: { name?: string, description?: string }) => void, { loading: boolean, data: any, error: any }];
+type ProjectUpdateHandlerType = [(original: Project, project: { name?: string, description?: string, isPinned?: boolean }) => void, { loading: boolean, data: any, error: any }];
 
 export const useProjectUpdateHandler = (): ProjectUpdateHandlerType => {
 	const [update, result] = useMutation(PatchProjectMutation);
@@ -18,19 +18,19 @@ export const useProjectUpdateHandler = (): ProjectUpdateHandlerType => {
 	}, [result.loading]);
 
 	return [
-		(original: Project, project: { name?: string, description?: string }) => {
+		(original: Project, project: { name?: string, description?: string, isPinned?: boolean }) => {
 			setLoading(true);
-			let diff: Partial<Project> = {};
+			let diff: any = {};
 
-			['name', 'description'].forEach((key: string) => {
-				let k = key as 'name' | 'description';
+			['name', 'description', 'isPinned'].forEach((key: string) => {
+				let k = key as 'name' | 'description' | 'isPinned';
 
 				if (original[k] !== project[k]) {
 					diff[k] = project[k];
 					
 				}
 			})
-
+			console.log({ diff })
 			update({ variables: { ...diff, id: original.id } });
 		},
 		{

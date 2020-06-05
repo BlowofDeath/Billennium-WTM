@@ -53,41 +53,82 @@ const Projects: FC = () => {
 	if (error)
 		return <span>Error...</span>;
 
+	const sideProjects = data.projects.filter((project: Project) => !project.isClosed && project.isPinned);
+	const activeProjects = data.projects.filter((project: Project) => !project.isClosed && !project.isPinned);
+
 	return (
 		<div>
-			<h3>Projects</h3>
+			<Panel>
+				<h2>Projekty</h2>
+			</Panel>
+
+			<Panel>
+				<h3>Inne zajęcia</h3>
+				{
+					sideProjects.map((project: Project) => {
+						let inactive = task && (task.id !== project.id) ? "true" : undefined;
+						let stop = task && (task.id === project.id) ? "true" : undefined;
+
+						return (
+							<StyledListItem key={project.id}>
+								<Column>
+									<span>{ project.name }</span>
+									<SecondaryText>
+										{ project.description }
+									</SecondaryText>
+								</Column>
+								<Column>
+									<StyledButton
+										inactive={ inactive }
+										stop={ stop }
+										onClick={() => { _handleProjectClick(project) } }
+										variant="outlined"
+										startIcon={(project.id === task?.id) ? <BsStop /> : <BsPlay size={20} />}>
+										{ task?.id === project.id ? <span>Stop</span> : <span>Start</span> }
+									</StyledButton>
+									<SecondaryText>
+										{ project.id === task?.id && <TimeCounter from={((task?.from as number))}/> }	
+									</SecondaryText>
+								</Column>
+							</StyledListItem>
+						)
+					})
+				}
+
+			</Panel>
 			
 			<Panel>
-			{
-				 data.projects.map((project: Project) => {
-					let inactive = task && (task.id !== project.id) ? "true" : undefined;
-					let stop = task && (task.id === project.id) ? "true" : undefined;
+				<h3>Projekty</h3>
+				{
+					activeProjects.map((project: Project) => {
+						let inactive = task && (task.id !== project.id) ? "true" : undefined;
+						let stop = task && (task.id === project.id) ? "true" : undefined;
 
-					return (
-						<StyledListItem key={project.id}>
-							<Column>
-								<span>{ project.name }</span>
-								<SecondaryText>
-									{ project.description }
-								</SecondaryText>
-							</Column>
-							<Column>
-								<StyledButton
-									inactive={ inactive }
-									stop={ stop }
-									onClick={() => { _handleProjectClick(project) } }
-									variant="outlined"
-									startIcon={(project.id === task?.id) ? <BsStop /> : <BsPlay size={20} />}>
-									{ task?.id === project.id ? <span>Stop</span> : <span>Start</span> }
-								</StyledButton>
-								<SecondaryText>
-									{ project.id === task?.id && <TimeCounter from={((task?.from as number))}/> }	
-								</SecondaryText>
-							</Column>
-						</StyledListItem>
-					)
-				})
-			}
+						return (
+							<StyledListItem key={project.id}>
+								<Column>
+									<span>{ project.name }</span>
+									<SecondaryText>
+										{ project.description }
+									</SecondaryText>
+								</Column>
+								<Column>
+									<StyledButton
+										inactive={ inactive }
+										stop={ stop }
+										onClick={() => { _handleProjectClick(project) } }
+										variant="outlined"
+										startIcon={(project.id === task?.id) ? <BsStop /> : <BsPlay size={20} />}>
+										{ task?.id === project.id ? <span>Stop</span> : <span>Start</span> }
+									</StyledButton>
+									<SecondaryText>
+										{ project.id === task?.id && <TimeCounter from={((task?.from as number))}/> }	
+									</SecondaryText>
+								</Column>
+							</StyledListItem>
+						)
+					})
+				}
 			</Panel>
 		</div>
 	)

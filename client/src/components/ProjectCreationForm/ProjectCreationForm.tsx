@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, SyntheticEvent } from 'react';
-import { styled, TextField, FormControl, Button } from '@material-ui/core';
+import { styled, TextField, FormControl, Button, FormControlLabel, Switch } from '@material-ui/core';
 import { Project } from '../../core/Project';
 import { useProjectUpdateHandler } from '../ManagerProjects/useProjectUpdateHandler';
 import { useProjectCreationHandler } from '../ManagerProjects/useProjectCreationHandler';
@@ -26,6 +26,7 @@ const ProjectCreationForm: FC<ProjectCreationFormProps> = ({ onCreate, onUpdate,
 	const [onProjectUpdate, updateResult] = useProjectUpdateHandler();
 	const [name, setName] = useState(data ? data.name : "");
 	const [description, setDescription] = useState(data ? data.description : "");
+	const [isPinned, setIsPinned] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -59,10 +60,10 @@ const ProjectCreationForm: FC<ProjectCreationFormProps> = ({ onCreate, onUpdate,
 		e.stopPropagation();
 		
 		if (data) {
-			onProjectUpdate(data, { name, description });
+			onProjectUpdate(data, { name, description, isPinned });
 		}
 		else {
-			onProjectCreate(name, description);
+			onProjectCreate(name, description, isPinned);
 		}
 	}
 
@@ -86,6 +87,13 @@ const ProjectCreationForm: FC<ProjectCreationFormProps> = ({ onCreate, onUpdate,
 						multiline
 						rows={7}
 						onChange={(event) => { setDescription(event.target.value) }}/>
+					<FormControlLabel
+						label={isPinned ? "Inne zajęcia" : "Projekt"}
+						control={
+							<Switch
+								checked={isPinned}
+								onChange={() => { setIsPinned(!isPinned) }}/>
+						}/>
 					<Button
 						variant="outlined"
 						color="primary"
