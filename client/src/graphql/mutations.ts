@@ -30,8 +30,8 @@ export const StopTimeRecordingMutation = gql`
 
 export const CreateProjectMutation = gql`
 	mutation CreateProjectMutation($name: String!, $description: String!, $isPinned: Boolean) {
-		addProject(name: $name, description: $description) {
-			name, description
+		addProject(name: $name, description: $description, isPinned: $isPinned) {
+			name, description, isPinned
 		}
 	}
 `;
