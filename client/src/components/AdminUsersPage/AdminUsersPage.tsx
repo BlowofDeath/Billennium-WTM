@@ -41,8 +41,7 @@ const AdminUsersPage: FC = () => {
 								__typename: "Typ",
 								role: "Rola",
 								email: "Email",
-								isActive: "Aktywny",
-								salary: "Stawka"
+								isActive: "Aktywny"
 							}}
 							booleans={{
 								true: "Tak",

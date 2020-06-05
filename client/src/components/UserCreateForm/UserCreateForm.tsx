@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, SyntheticEvent, useContext } from 'react';
-import { FormControl, TextField, Button, Select, MenuItem, Switch } from '@material-ui/core';
+import { FormControl, TextField, Button, Select, MenuItem, Switch, FormControlLabel } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 import EmailField from '../EmailField/EmailField';
 import PasswordField from '../PasswordField/PasswordField';
@@ -37,7 +37,6 @@ export interface FormData {
 	password: 	string,
 	first_name: string,
 	last_name: 	string,
-	salary: 	number,
 	isActive: 	boolean
 }
 
@@ -64,7 +63,6 @@ const defaultData: FormData = {
 	password: 	"",
 	first_name: "",
 	last_name: 	"",
-	salary: 	0,
 	isActive: 	true
 }
 
@@ -143,19 +141,13 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 					label="nazwisko"
 					onChange={(e) => { setFormData({ ...formData, last_name: e.target.value.trim() }) }}/>
 
-				<TextField
-					InputLabelProps={{
-						shrink: true
-					}}
-					value={formData.salary ?? 0}
-					required
-					type="number"
-					label="stawka"
-					onChange={(e) => { setFormData({ ...formData, salary: parseInt(e.target.value || "0") })} }/>
-
-				<Switch
-					checked={formData.isActive}
-					onChange={() => { setFormData({ ...formData, isActive: !formData.isActive }) }}/>
+				<FormControlLabel
+					label={ formData.isActive ? "Aktywny" : "Nieaktywny" }
+					control={
+						<Switch
+							checked={formData.isActive}
+							onChange={() => { setFormData({ ...formData, isActive: !formData.isActive }) }}/>
+				}/>
 
 				<Select
 					value={formData.role}
