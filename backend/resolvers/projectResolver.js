@@ -17,12 +17,12 @@ const projectResolver = {
     },
   },
   Mutation: {
-    addProject: async (_, { name, description }) => {
+    addProject: async (_, { name, description, isPinned }) => {
       const project = await Project.create({
         name,
         description,
         isClosed: false,
-        isPinned: false,
+        isPinned: isPinned != undefined ? isPinned : false,
       });
 
       return project;

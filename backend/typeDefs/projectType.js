@@ -18,7 +18,7 @@ const projectType = gql`
   }
 
   type Mutation {
-    addProject(name: String!, description: String): Project!
+    addProject(name: String!, description: String, isPinned: Boolean): Project!
     updateProject(
       id: ID!
       name: String
