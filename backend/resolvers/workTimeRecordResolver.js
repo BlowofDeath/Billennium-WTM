@@ -3,10 +3,8 @@ import WorkTimeRecord from "../models/WorkTimeRecord";
 import { UserInputError, AuthenticationError } from "apollo-server";
 import validator from "validator";
 import moment from "moment";
-import { verifyJWT } from "../middleware/jwtTool";
 import User from "../models/User";
 import Project from "../models/Project";
-import { stopWTR } from "../services/workTimeRecordService";
 
 const workTimeRecordResolver = {
   Query: {
@@ -22,9 +20,9 @@ const workTimeRecordResolver = {
   Mutation: {
     //Resolver powinien zacząć odliczanie jeśli:
     //WTR jest zakończone lub odliczanie zostało właczone dla innego projektu
-    startWorkTimeRecord: async (_, { token, projectId }) => {
-      const { userId } = verifyJWT(token);
-      if (!userId) throw new AuthenticationError("Incorrect token");
+    startWorkTimeRecord: async (_, { projectId }, { auth }) => {
+      if (!auth) throw new AuthenticationError("Incorrect token");
+      const { userId } = auth;
       const user = await User.findOne({ where: { id: userId } });
       if (!user) throw new Error("User is not exist");
 
@@ -73,9 +71,9 @@ const workTimeRecordResolver = {
 
       return null;
     },
-    stopWorkTimeRecord: async (_, { token }) => {
-      const { userId } = verifyJWT(token);
-      if (!userId) throw new AuthenticationError("Incorrect token");
+    stopWorkTimeRecord: async (_, args, { auth }) => {
+      if (!auth) throw new AuthenticationError("Incorrect token");
+      const { userId } = auth;
       const user = await User.findOne({ where: { id: userId } });
       if (!user) throw new Error("User is not exist");
       const month = await Month.findOne({
@@ -92,31 +90,32 @@ const workTimeRecordResolver = {
         },
         order: [["createdAt", "DESC"]],
       });
-      //Sprawdza czy ostatni wtr istnieje i czy jest zakończczony
+      //Sprawdza czy ostatni wtr istnieje i czy jest zakończczony//
       if (!wtr) return null;
       if (wtr.to != null) return null;
       const now = moment();
       wtr.to = now;
-      if (now.valueOf() - wtr.from.valueOf() >= 60000) {
+      const minimalWTRTime = process.env.MINIMAL_WTR_TIME || 5;
+      if (now.valueOf() - wtr.from.valueOf() >= 1000 * 60 * minimalWTRTime) {
         await wtr.save();
         return wtr;
       } else {
         WorkTimeRecord.destroy({ where: { id: wtr.id } });
         return null;
       }
-      return stopWTR(userId);
     },
-    updateWorkTimeRecord: async (_, { token, id, day, from, to }) => {
+    updateWorkTimeRecord: async (_, { id, day, from, to }) => {
       const wtr = await WorkTimeRecord.findOne({ where: { id } });
       if (!wtr) throw new UserInputError("Work Time Record is not exist");
       (wtr.day = day), (wtr.from = from), (wtr.to = to);
       await wtr.save();
       return wtr;
     },
-    removeWorkTimeRecord: async (_, { token, id }) => {
-      const destroyed = WorkTimeRecord.destroy({ where: { id: wtr.id } });
-      if (!destroyed) throw new UserInputError("Work Time Record is not exist");
-      return null;
+    removeWorkTimeRecord: async (_, { id }) => {
+      const wtr = await WorkTimeRecord.findOne({ where: { id } });
+      if (!wtr) return null;
+      const destroyed = await WorkTimeRecord.destroy({ where: { id } });
+      return wtr;
     },
   },
   WorkTimeRecord: {

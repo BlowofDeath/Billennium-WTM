@@ -3,12 +3,7 @@ import WorkTimeRecord from "../models/WorkTimeRecord";
 import Project from "../models/Project";
 import { UserInputError, AuthenticationError } from "apollo-server";
 import validator from "validator";
-import moment from "moment";
-import { verifyJWT } from "../middleware/jwtTool";
 import User from "../models/User";
-import { Op } from "sequelize";
-import { QueryTypes } from "sequelize";
-import db from "../configs/database";
 
 const projectResolver = {
   Query: {
@@ -26,24 +21,34 @@ const projectResolver = {
       const project = await Project.create({
         name,
         description,
-        isClosed: 0,
+        isClosed: false,
+        isPinned: false,
       });
 
       return project;
     },
     updateProject: async (_, { id, name, description, isClosed }) => {
       const project = await Project.findOne({ where: { id } });
+      if (!project) throw new Error("Project is not exist");
       if (name) project.name = name;
       if (description) project.description = description;
-      if (isClosed) project.isClosed = isClosed;
+      if (isPinned != undefined) project.isPinned = isPinned;
+      if (isClosed != undefined) {
+        if (project.isPinned)
+          throw new Error("Pinned projects can't be closed");
+        project.isClosed = isClosed;
+      }
       await project.save();
       return project;
     },
     removeProject: async (_, { id }) => {
-      const wtr = await Project.findAll({ where: { projectId: id } });
+      const wtr = await WorkTimeRecord.findOne({ where: { projectId: id } });
       if (wtr)
         throw new Error("Can't delete project with related WorkTimeRecord");
-      const project = Project.destroy({ where: { id } });
+      const project = Project.findOne({ where: { id } });
+      if (!project) throw new Error("Project is not exist");
+      if (project.isPinned) throw new Error("Pinned project can't be deleted");
+      await Project.destroy({ where: { id } });
       return project;
     },
   },
@@ -52,10 +57,6 @@ const projectResolver = {
       return await WorkTimeRecord.findAll({ where: { projectId: id } });
     },
     users: async ({ id }, args) => {
-      // return await db.query(
-      //   `SELECT DISTINCT * FROM users AS u LEFT JOIN months AS m ON u.id = m.userid LEFT JOIN worktimerecords AS w on m.id = w.monthid WHERE w.projectid = ${id}`,
-      //   { type: QueryTypes.SELECT }
-      // );
       return await User.findAll({
         include: [
           {

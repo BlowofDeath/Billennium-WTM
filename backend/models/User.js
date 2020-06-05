@@ -12,7 +12,6 @@ const User = db.define("users", {
     type: Sequelize.ENUM("Pracownik", "Kierownik", "Admin"),
     defaultValue: "Pracownik",
   },
-  salary: Sequelize.INTEGER,
   isActive: Sequelize.BOOLEAN,
 });
 
