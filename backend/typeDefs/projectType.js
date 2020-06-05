@@ -11,6 +11,7 @@ const projectType = gql`
     name: String!
     description: String
     isClosed: Boolean!
+    isPinned: Boolean!
     workTimeRecords: [WorkTimeRecord]
     users: [User]
     wtrsPerMonth(month: Int!, year: Int!): [WorkTimeRecord]
@@ -23,6 +24,7 @@ const projectType = gql`
       name: String
       description: String
       isClosed: Boolean
+      isPinned: Boolean
     ): Project!
     removeProject(id: ID!): Project
   }

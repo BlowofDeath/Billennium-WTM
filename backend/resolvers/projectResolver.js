@@ -27,7 +27,7 @@ const projectResolver = {
 
       return project;
     },
-    updateProject: async (_, { id, name, description, isClosed }) => {
+    updateProject: async (_, { id, name, description, isClosed, isPinned }) => {
       const project = await Project.findOne({ where: { id } });
       if (!project) throw new Error("Project is not exist");
       if (name) project.name = name;
