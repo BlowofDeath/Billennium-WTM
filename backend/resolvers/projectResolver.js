@@ -17,17 +17,17 @@ const projectResolver = {
     },
   },
   Mutation: {
-    addProject: async (_, { name, description }) => {
+    addProject: async (_, { name, description, isPinned }) => {
       const project = await Project.create({
         name,
         description,
         isClosed: false,
-        isPinned: false,
+        isPinned: isPinned != undefined ? isPinned : false,
       });
 
       return project;
     },
-    updateProject: async (_, { id, name, description, isClosed }) => {
+    updateProject: async (_, { id, name, description, isClosed, isPinned }) => {
       const project = await Project.findOne({ where: { id } });
       if (!project) throw new Error("Project is not exist");
       if (name) project.name = name;
