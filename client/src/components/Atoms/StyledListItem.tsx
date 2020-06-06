@@ -3,9 +3,10 @@ import { Row } from './Row';
 
 export const StyledListItem = styled(Row)({
 	transition: "background 200ms ease",
-	width: "100%",
+	maxWidth: "100%",
 	background: "#fefefe",
 	padding: "20px",
+	overflow: "hidden",
 	borderBottom: "1px solid #efefef",
 
 	"&:first-child": {

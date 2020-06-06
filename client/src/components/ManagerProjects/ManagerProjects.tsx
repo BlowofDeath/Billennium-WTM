@@ -72,7 +72,7 @@ const ManagerProjects: FC = () => {
 							<Button
 								variant="outlined"
 								color="primary"
-								onClick={() => { generujpdf(data.projects, now.month() + 1, now.year()) }}>
+								onClick={() => { generujpdf(activeProjects, now.month() + 1, now.year()) }}>
 									Raport
 							</Button>
 							<Button
