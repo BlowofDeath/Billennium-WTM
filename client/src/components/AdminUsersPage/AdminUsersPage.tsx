@@ -9,13 +9,14 @@ import { ApolloError } from 'apollo-boost';
 
 const AdminUsersPage: FC = () => {
 	const [selectedUser, setSelectedUser] = useState<FormData | undefined>(undefined);
-	const { data } = useQuery(AdminUsersQuery);
+	const { data, refetch } = useQuery(AdminUsersQuery);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const _handleCreateOrUpdate = (data: FormData, error: ApolloError, loading: boolean, called: boolean) => {
 		if (!loading && (data || error)) {
 			setIsModalVisible(false);
 			setSelectedUser(undefined);
+			refetch();
 		}
 	}
 
@@ -39,7 +40,7 @@ const AdminUsersPage: FC = () => {
 				{ data && <ControlledTable
 							data={data.users}
 							onSelect={(user: FormData) => {
-								setSelectedUser({ ...user, password: "" })
+								setSelectedUser(() => { return { ...user, password: "" } })
 								setIsModalVisible(true);
 							}}
 							onCreate={(e) => { setIsModalVisible(true) }}

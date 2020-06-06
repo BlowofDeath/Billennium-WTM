@@ -11,6 +11,7 @@ export const Row = styled(
 	({ children, justifyContent, ...props }: RowProps) => <div {...props}>{ children }</div>)
 	(({ justifyContent }: JustifyContentType) => ({
 	display: "flex",
+	flexGrow: 1,
 	flexDirection: "row",
 	justifyContent: justifyContent ?? "space-between",
 	'& > *': {

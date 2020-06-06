@@ -10,7 +10,7 @@ export const useFormCreateHandler = () => {
 	useEffect(() => {
 		if (result.data || result.error) {
 			setTimeout(() => {
-				setLoading(true);
+				setLoading(false);
 			}, 700);
 		}
 	}, [result])

@@ -3,7 +3,7 @@ import { Row } from './Row';
 
 export const StyledListItem = styled(Row)({
 	transition: "background 200ms ease",
-	maxWidth: "100%",
+	width: "100%",
 	background: "#fefefe",
 	padding: "20px",
 	overflow: "hidden",

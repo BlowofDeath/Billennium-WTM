@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, SyntheticEvent, useContext } from 'react';
+import React, { FC, useState, useEffect, SyntheticEvent, useContext, createRef, useRef } from 'react';
 import { FormControl, TextField, Button, Select, MenuItem, Switch, FormControlLabel } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 import EmailField from '../EmailField/EmailField';
@@ -10,7 +10,7 @@ import { User } from '../../core/User';
 import { Context } from '../App/Context';
 import { useApolloErrorHandler } from '../../hoc/useApolloErrorHandler';
 
-const StyledForm = styled('form')({
+const StyledForm = styled(({ children, ref, ...props }) => <form ref={ref} {...props}>{ children }</form>)({
 	position: "relative",
 	zIndex: 101,
 	background: "#fff",
@@ -92,6 +92,7 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	const _handleConfirm = (e: SyntheticEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
+		(e.target as HTMLFormElement).reset();
 		// use update handler
 		if (userData && token) {
 			update(userData as unknown as User, formData as unknown as User, token as string);
@@ -110,10 +111,11 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	}, [updateResult.error])
 
 	useEffect(() => {
-		if (userData)
-			setFormData(userData);
+		if (userData) {
+			setFormData({ ...userData, password: "" });
+		}
 		else
-			setFormData(defaultData);
+			setFormData({ ...defaultData, password: "" });
 	}, [userData, defaultData]);
 
 	useEffect(() => {
@@ -121,7 +123,7 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 		if (mounted)
 			onCreateUser(createResult.data, createResult.error, createResult.loading, createResult.called);
 		return () => { mounted = false };	
-	}, [createResult?.data, createResult?.error, createResult?.loading]);
+	}, [createResult?.data, createResult?.loading, createResult?.error]);
 	
 	useEffect(() => {
 		let mounted = true;
@@ -131,7 +133,7 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	}, [updateResult?.data, updateResult?.error, updateResult?.loading]);
 
 	return (
-		<StyledForm onClick={(e) => { e.stopPropagation() }} onSubmit={_handleConfirm}>
+		<StyledForm onClick={(e: SyntheticEvent<HTMLFormElement>) => { e.stopPropagation() }} onSubmit={_handleConfirm}>
 			<Loader loading={createResult.loading || updateResult.loading}/>
 			<h2>{ userData ? label.edit : label.create }</h2>
 			<FormControl>
