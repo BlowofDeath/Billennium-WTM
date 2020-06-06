@@ -5,11 +5,19 @@ import { useQuery } from '@apollo/react-hooks';
 import Panel from '../Panel/Panel';
 import { Button, Backdrop } from '@material-ui/core';
 import UserCreateForm, { FormData } from '../UserCreateForm/UserCreateForm';
+import { ApolloError } from 'apollo-boost';
 
 const AdminUsersPage: FC = () => {
 	const [selectedUser, setSelectedUser] = useState<FormData | undefined>(undefined);
-	const { data, refetch } = useQuery(AdminUsersQuery);
+	const { data } = useQuery(AdminUsersQuery);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+
+	const _handleCreateOrUpdate = (data: FormData, error: ApolloError, loading: boolean, called: boolean) => {
+		if (!loading && (data || error)) {
+			setIsModalVisible(false);
+			setSelectedUser(undefined);
+		}
+	}
 
 	return (
 		<Fragment>
@@ -24,7 +32,8 @@ const AdminUsersPage: FC = () => {
 						edit: "Aktualizuj",
 						create: "Dodaj"
 					}}
-					onCreateUser={(data: FormData, error: any) => { refetch() }}/>
+					onCreateUser={_handleCreateOrUpdate}
+					onUpdateUser={_handleCreateOrUpdate}/>
 			</Backdrop>
 			<Panel>
 				{ data && <ControlledTable
@@ -33,7 +42,7 @@ const AdminUsersPage: FC = () => {
 								setSelectedUser({ ...user, password: "" })
 								setIsModalVisible(true);
 							}}
-							onCreate={() => { setIsModalVisible(true) }}
+							onCreate={(e) => { setIsModalVisible(true) }}
 							createButton={ <Button variant="outlined" color="primary">Nowy użytkownik</Button> }
 							map={{
 								first_name: "Imię",

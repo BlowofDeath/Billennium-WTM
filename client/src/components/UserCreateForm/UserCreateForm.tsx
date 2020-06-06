@@ -45,7 +45,9 @@ export interface UserCreateFormProps {
 	/** */
 	userData?: FormData,
 	/** */
-	onCreateUser?: (data: FormData, error: any) => void,
+	onCreateUser?: (data: FormData, error: any, loading: boolean, called: boolean) => void,
+	/** */
+	onUpdateUser?: (data: FormData, error: any, loading: boolean, called: boolean) => void,
 	/** */
 	label?: {
 		edit: 		string,
@@ -70,6 +72,7 @@ const defaultData: FormData = {
 /** UserCreateForm */
 const UserCreateForm: FC<UserCreateFormProps> = ({
 	onCreateUser=function(){},
+	onUpdateUser=function(){},
 	label={
 		edit: 	"Update user",
 		create: "Create new user"
@@ -82,7 +85,7 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 }) => {
 	const { token } = useContext(Context);
 	const { update, ...updateResult } = useUserUpdater();
-	const { signup, data, error, loading } = useFormCreateHandler();
+	const { signup, ...createResult } = useFormCreateHandler();
 	const [formData, setFormData] = useState<FormData>(userData ?? defaultData);
 	const { handleError } = useApolloErrorHandler();
 
@@ -114,12 +117,22 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	}, [userData, defaultData]);
 
 	useEffect(() => {
-		onCreateUser(data, error);
-	}, [data, error, onCreateUser]);
+		let mounted = true;
+		if (mounted)
+			onCreateUser(createResult.data, createResult.error, createResult.loading, createResult.called);
+		return () => { mounted = false };	
+	}, [createResult?.data, createResult?.error, createResult?.loading]);
 	
+	useEffect(() => {
+		let mounted = true;
+		if (mounted)
+			onUpdateUser(updateResult.data, updateResult.error, updateResult.loading, updateResult.called);
+		return () => { mounted = false };
+	}, [updateResult?.data, updateResult?.error, updateResult?.loading]);
+
 	return (
 		<StyledForm onClick={(e) => { e.stopPropagation() }} onSubmit={_handleConfirm}>
-			<Loader loading={loading}/>
+			<Loader loading={createResult.loading || updateResult.loading}/>
 			<h2>{ userData ? label.edit : label.create }</h2>
 			<FormControl>
 				<EmailField

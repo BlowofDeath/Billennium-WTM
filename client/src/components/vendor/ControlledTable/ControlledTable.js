@@ -90,7 +90,7 @@ const ControlledTable = ({
 			newHeader[field] = true;
 		});
 		setHeader(newHeader);
-	}, [rows])
+	}, []);
 
 	// Create checkboxes that toggles columns
 	const columns = Object.keys(header).map((name, index) => {
