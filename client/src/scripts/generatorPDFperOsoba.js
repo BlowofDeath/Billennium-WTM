@@ -1,6 +1,7 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import moment from 'moment';
+import { fromPromise } from "apollo-link";
 
 function getTimeFromWorkTimeRecords(WTR){
 	let time = 0;
@@ -13,6 +14,7 @@ function getTimeFromWorkTimeRecords(WTR){
 		}
 		let from=parseInt(WorkTimeRecord.from);
 		time += moment(to).diff(moment(from), "minutes");
+		console.log(to + " <->" + from);
 	});
 	return time;
 }
@@ -59,7 +61,7 @@ function timeToString(time){
 // dodaj zawartość do poszczególnych komórek
 function buildTableBody(data, columns) {
 	var body = [];
-	const columnsPoland = [{text: 'NAZWA', fillColor: '#00264d', color: 'white', bold: true, alignment: 'center'}, {text: 'OPIS', fillColor: '#00264d', color: 'white', bold: true, alignment: 'center'}, {text: 'CZAS', fillColor: '#00264d', color: 'white', bold: true, alignment: 'center'}];
+	const columnsPoland = [{text: 'Imię', fillColor: '#00264d', color: 'white', bold: true, alignment: 'center'}, {text: 'Nazwisko', fillColor: '#00264d', color: 'white', bold: true, alignment: 'center'}, {text: 'CZAS', fillColor: '#00264d', color: 'white', bold: true, alignment: 'center'}];
 	body.push(columnsPoland);
 	data.forEach(function(row) {
 		var dataRow = [];
@@ -77,14 +79,14 @@ function buildTableBody(data, columns) {
 function table(data, columns) {
 	return {
 		table: {
-			widths: [100, '*', 100],
+			widths: [120, 120, '*'],
 			headerRows: 1,
 			body: buildTableBody(data, columns)
 		}
 	};
 }
 
-export function generujpdf(Projects, month, year){
+export function generujpdf2(Users, month, year){
 	//definicja dokumentu
 	pdfMake.vfs = pdfFonts.pdfMake.vfs;
 	const months=["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
@@ -95,7 +97,7 @@ export function generujpdf(Projects, month, year){
 				alignment: 'center',
 				margin: [0, 0, 0, 15]
 			},
-			table(Projects, ['name', 'description', 'workTimeRecords'])
+			table(Users, ['first_name', 'last_name', 'workTimeRecords'])
 		]
 	}
 	//generuj pdf
