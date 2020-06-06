@@ -112,7 +112,9 @@ const Schedule: FC = () => {
 								disabled={moment([year, month]).isSameOrAfter(now, "month")}
 								variant="outlined"
 								color="primary" 
-								onClick={() => { closeMonth(data.month.id) }}>
+								onClick={() => {
+									closeMonth(data.month?.id)
+								}}>
 								Rozlicz
 							</Button>
 							<SecondaryText>
