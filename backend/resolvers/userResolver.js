@@ -25,10 +25,18 @@ const userResolver = {
   },
   User: {
     projects: async ({ id }, args) => {
-      return await db.query(
-        `SELECT DISTINCT u.id FROM projects AS p LEFT JOIN worktimerecords AS w ON p.id = w.projectid LEFT JOIN months AS m ON w.monthid = m.id LEFT JOIN users AS u ON m.userid = u.id WHERE u.id = ${id}`,
-        { type: QueryTypes.SELECT }
-      );
+      return await Project.findAll({
+        include: [
+          {
+            required: true,
+            model: WorkTimeRecord,
+            include: {
+              model: Month,
+              where: { userId: id },
+            },
+          },
+        ],
+      });
     },
     activeWorkTimeRecord: async ({ id }, args) => {
       const workTimeRecord = await WorkTimeRecord.findOne({
