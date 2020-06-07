@@ -3,7 +3,7 @@ import Month from "../models/Month";
 import WorkTimeRecord from "../models/WorkTimeRecord";
 import Project from "../models/Project";
 import bcrypt from "bcrypt";
-import { UserInputError, AuthenticationError } from "apollo-server";
+import { UserInputError, AuthenticationError } from "apollo-server-express";
 import validator from "validator";
 import { signJWT, verifyJWT } from "../middleware/jwtTool";
 import moment from "moment";

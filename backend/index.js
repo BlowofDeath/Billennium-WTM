@@ -1,10 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { ApolloServer } from "apollo-server";
+import { ApolloServer } from "apollo-server-express";
 import typeDefs from "./typeDefs/typeDefs";
 import resolvers from "./resolvers/resolvers";
 import db from "./configs/database";
 import { verifyJWT } from "./middleware/jwtTool";
+import express from "express";
+const app = express();
 
 async function startServer() {
   await db
@@ -20,6 +22,7 @@ async function startServer() {
   // await db.sync({ force: true }).then(() => {
   //   console.log(`Database & tables created!`);
   // });
+  app.use(express.static(process.env.FRONTEND_FILES || "../client/build"));
 
   const server = new ApolloServer({
     typeDefs,
@@ -43,10 +46,11 @@ async function startServer() {
     },
   });
 
-  // The `listen` method launches a web server.
-  server.listen().then(({ url }) => {
-    console.log(`Server ready at ${url}`);
-  });
+  server.applyMiddleware({ app });
+  const port = process.env.PORT || 4001;
+  app.listen({ port }, () =>
+    console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`)
+  );
 }
 
 startServer();

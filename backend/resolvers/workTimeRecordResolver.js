@@ -1,6 +1,6 @@
 import Month from "../models/Month";
 import WorkTimeRecord from "../models/WorkTimeRecord";
-import { UserInputError, AuthenticationError } from "apollo-server";
+import { UserInputError, AuthenticationError } from "apollo-server-express";
 import validator from "validator";
 import moment from "moment";
 import User from "../models/User";
