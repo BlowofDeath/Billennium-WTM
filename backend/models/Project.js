@@ -6,6 +6,7 @@ const Project = db.define("projects", {
   name: Sequelize.STRING,
   description: Sequelize.TEXT,
   isClosed: Sequelize.BOOLEAN,
+  isPinned: Sequelize.BOOLEAN,
 });
 
 Project.hasMany(WorkTimeRecord);

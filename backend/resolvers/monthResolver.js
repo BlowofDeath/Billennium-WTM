@@ -1,18 +1,20 @@
 import Month from "../models/Month";
 import User from "../models/User";
-import { UserInputError } from "apollo-server";
+import { UserInputError, AuthenticationError } from "apollo-server-express";
 import validator from "validator";
 import WorkTimeRecord from "../models/WorkTimeRecord";
 import { verifyJWT } from "../middleware/jwtTool";
 import { Op } from "sequelize";
+import moment from "moment";
 
 const monthResolver = {
   Query: {
-    month: async (_, { token, month, year }) => {
-      const { userId } = verifyJWT(token);
+    month: async (_, { month, year }, { auth }) => {
+      if (!auth) throw new AuthenticationError("Incorrect token");
+      const { userId } = auth;
       return await Month.findOne({ where: { year, month, userId } });
     },
-    monthForAllUsers: async (_, { token, month, year, status }) => {
+    monthForAllUsers: async (_, { month, year, status }, { auth }) => {
       //zwraca work time z każdego miesiąca dla wszystkich userów
       if (status)
         return await Month.findAll({ where: { month, year, status } });
@@ -114,6 +116,11 @@ const monthResolver = {
     updateMonthStatus: async (_, { id, status }) => {
       const month = await Month.findOne({ where: { id } });
       if (!month) throw new Error("Month is not exist");
+      const date = moment();
+      const activeMonth = date.format("M");
+      const activeYear = date.format("Y");
+      if (month.year == activeYear && month.month >= activeMonth)
+        throw new Error("Can't change active month status");
       month.status = status;
       await month.save();
       return month;
