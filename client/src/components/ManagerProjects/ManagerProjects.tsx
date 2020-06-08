@@ -1,4 +1,4 @@
-import React, { FC, useReducer, useEffect } from 'react';
+import React, { FC, useReducer, useState, useEffect } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { ManagerProjectsQuery } from '../../graphql/queries';
 import { FaPlus } from 'react-icons/fa';
@@ -6,8 +6,6 @@ import Panel from '../Panel/Panel';
 import moment from 'moment';
 import { Button, Backdrop } from '@material-ui/core';
 import ProjectCreationForm from '../ProjectCreationForm/ProjectCreationForm';
-import { useProjectCreationHandler } from './useProjectCreationHandler';
-import Loader from '../Loader/Loader';
 import { generujpdf } from '../../scripts/generatorPDF';
 import ProjectList from '../ProjectList/ProjectList';
 import { Project } from '../../core/Project';
@@ -16,21 +14,36 @@ import { Column } from '../Atoms/Column';
 import { useProjectCloser } from './useProjectCloser';
 import { Row } from '../Atoms/Row';
 import { CustomExpansionPanel } from '../Atoms/CustomExpansionPanel';
+import { useApolloErrorHandler } from '../../hoc/useApolloErrorHandler';
 
 const ManagerProjects: FC = () => {
 	const now = moment();
+	const [editProjectData, setEditProjectData] = useState<Project | null>(null);
 	const [isBackdropOpen, toggleBackdrop] = useReducer((state) => !state, false);
+	const { handleError } = useApolloErrorHandler();
 	const { data, loading, error, refetch } = useQuery(ManagerProjectsQuery);
-	const [onProjectCreate, creationResult] = useProjectCreationHandler();
+	
 	const { close, ...closeProjectResult } = useProjectCloser();
-	const activeProjects = data?.projects.filter((project: Project) => !project.isClosed);
+	const activeProjects = data?.projects.filter((project: Project) => !project.isClosed && !project.isPinned);
 	const closedProjects = data?.projects.filter((project: Project) => project.isClosed);
+	const sideProjects = data?.projects.filter((project: Project) => project.isPinned && !project.isClosed);
 
-	useEffect(() => {
-		if (!creationResult.data) {
+	console.log(data?.projects)
+
+	const _handleCreateOrUpdate = (data: any, error: any, loading: boolean) => {
+		if (!loading && (data || error)) {
+			toggleBackdrop();
+			setEditProjectData(null);
 			refetch();
 		}
-	}, [creationResult.data, refetch, closeProjectResult.data]);
+	}
+
+	useEffect(() => {
+		if (error)
+			handleError(error);
+		if (closeProjectResult.error)
+			handleError(closeProjectResult.error);
+	}, [error, closeProjectResult.error])
 
 	if (loading)
 		return <span>Loading...</span>;
@@ -40,8 +53,10 @@ const ManagerProjects: FC = () => {
 	return (
 		<div>
 			<Backdrop open={isBackdropOpen} onClick={toggleBackdrop} style={{ zIndex: 2000 }}>
-				<ProjectCreationForm onSubmit={onProjectCreate}/>
-				<Loader loading={creationResult.loading}/>
+				<ProjectCreationForm
+					data={editProjectData}
+					onCreate={_handleCreateOrUpdate}
+					onUpdate={_handleCreateOrUpdate}/>
 			</Backdrop>
 
 			<Panel>
@@ -57,14 +72,17 @@ const ManagerProjects: FC = () => {
 							<Button
 								variant="outlined"
 								color="primary"
-								onClick={() => { generujpdf(data.projects, now.month() + 1, now.year()) }}>
+								onClick={() => { generujpdf(activeProjects, now.month() + 1, now.year()) }}>
 									Raport
 							</Button>
 							<Button
 								variant="contained"
 								color="primary"
 								startIcon={<FaPlus/>}
-								onClick={toggleBackdrop}>
+								onClick={() => {
+									toggleBackdrop();
+									setEditProjectData(null); 
+								}}>
 							Dodaj 
 							</Button>
 						</Row>
@@ -73,21 +91,51 @@ const ManagerProjects: FC = () => {
 				
 			</Panel>
 
-			<CustomExpansionPanel
-				header={<h3>Aktywne projekty - { activeProjects.length }</h3>}
-				aria-controls="panel1a-content"
-				id="panel1a-header">
+			<Panel>
+				<h3>Aktywne projekty - { activeProjects.length }</h3>
 				<ProjectList
 					projects={activeProjects}
 					projectPostpendRender={(project: Project) => (
 						<Column style={{ paddingLeft: 30 }}>
+							<Button
+								variant="outlined"
+								color="primary"
+								onClick={() => {
+									setEditProjectData(project);
+									toggleBackdrop();
+								}}>
+								Edytuj
+							</Button>
 							<Button variant="outlined" color="primary" onClick={() => { close(project.id) }}>
 								Archiwizuj
 							</Button>
 							<SecondaryText>Nie może zostać cofnięte!</SecondaryText>
 						</Column>
 					)}/>
-			</CustomExpansionPanel>
+			</Panel>
+
+			<Panel>
+				<h3>Zadania poboczne - { sideProjects.length }</h3>
+				<ProjectList
+					projects={sideProjects}
+					projectPostpendRender={(project: Project) => (
+						<Column style={{ paddingLeft: 30 }}>
+							<Button
+								variant="outlined"
+								color="primary"
+								onClick={() => {
+									setEditProjectData(project);
+									toggleBackdrop();
+								}}>
+								Edytuj
+							</Button>
+							<Button variant="outlined" color="primary" onClick={() => { close(project.id) }}>
+								Archiwizuj
+							</Button>
+							<SecondaryText>Nie może zostać cofnięte!</SecondaryText>
+						</Column>
+					)}/>
+			</Panel>
 
 			<CustomExpansionPanel
 				header={<h3>Zarchiwizowane projekty - { closedProjects.length }</h3>}

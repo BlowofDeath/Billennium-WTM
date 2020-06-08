@@ -14,35 +14,34 @@ export const loginMutation = gql`
 `;
 
 export const StartTimeRecordingMutation = gql`
-	mutation StartTimeRecordingMutation($token: String!, $projectId: ID!) {
-		startWorkTimeRecord(token: $token, projectId: $projectId) {
+	mutation StartTimeRecordingMutation($projectId: ID!) {
+		startWorkTimeRecord(projectId: $projectId) {
 			from
 		}
 	}
 `;
 export const StopTimeRecordingMutation = gql`
-	mutation StopTimeRecordingMutation($token: String!) {
-		stopWorkTimeRecord(token: $token) {
+	mutation StopTimeRecordingMutation {
+		stopWorkTimeRecord {
 			from, to, day
 		}
 	}
 `;
 
 export const CreateProjectMutation = gql`
-	mutation CreateProjectMutation($name: String!, $description: String!) {
-		addProject(name: $name, description: $description) {
-			name, description
+	mutation CreateProjectMutation($name: String!, $description: String!, $isPinned: Boolean) {
+		addProject(name: $name, description: $description, isPinned: $isPinned) {
+			name, description, isPinned
 		}
 	}
 `;
 
 export const CreateUserMutation = gql`
-	mutation CreateUserMutation($email: String!, $password: String!, $first_name: String!, $last_name: String!, $role: String!, $salary: Int!, $isActive: Boolean!) {
+	mutation CreateUserMutation($email: String!, $password: String!, $first_name: String!, $last_name: String!, $role: Role!, $isActive: Boolean!) {
 		signup(
 			email: $email,
 			password: $password,
 			first_name: $first_name,
-			salary: $salary,
 			last_name: $last_name,
 			role: $role,
 			isActive: $isActive
@@ -57,22 +56,18 @@ export const CreateUserMutation = gql`
 
 export const PatchUserMutation = gql`
 	mutation PatchUserMutation(
-		$token: String!,
 		$id: ID!,
 		$email: String,
 		$first_name: String,
 		$last_name: String,
-		$salary: Int,
 		$role: Role,
 		$isActive: Boolean) {
 			updateUser(
-				token: $token,
 				id: $id,
 				email: $email,
 				first_name: $first_name,
 				last_name: $last_name,
 				role: $role,
-				salary: $salary,
 				isActive: $isActive) {
 					...UserFragment
 			}
@@ -81,8 +76,8 @@ export const PatchUserMutation = gql`
 `;
 
 export const PatchProjectMutation = gql`
-	mutation PatchProjectMutation($id: ID!, $name: String, $description: String, $isClosed: Boolean) {
-		updateProject(id: $id, name: $name, description: $description, isClosed: $isClosed) {
+	mutation PatchProjectMutation($id: ID!, $name: String, $description: String, $isClosed: Boolean, $isPinned: Boolean) {
+		updateProject(id: $id, name: $name, description: $description, isClosed: $isClosed, isPinned: $isPinned) {
 			...ProjectFragment
 		}
 	}

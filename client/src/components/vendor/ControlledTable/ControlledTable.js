@@ -12,6 +12,8 @@ import './ControlledTable.sass';
 const ControlledTable = ({
 		style={},
 		className="",
+		booleans=undefined,
+		map={}, // maps column name into given values
 		data=[{}], // data array or async function that populates it
 		withPagination=false, // Should pagination be turned on?
 		limits=[5, 20, 35, 50], // Array of possible limits
@@ -88,16 +90,16 @@ const ControlledTable = ({
 			newHeader[field] = true;
 		});
 		setHeader(newHeader);
-	}, [rows])
+	}, []);
 
 	// Create checkboxes that toggles columns
 	const columns = Object.keys(header).map((name, index) => {
 		return (
 			<Checkbox
 				key={ index }
-				label={ name }
+				label={ map[name] ? map[name] : name }
 				name={ name }
-				checked={ header[name] }
+				checked={ header[name] ? true : false }
 				onChange={ (name, checked) => { setHeader({ ...header, [name]: checked }) }}/>
 		);
 	})
@@ -121,10 +123,12 @@ const ControlledTable = ({
 				</div>
 
 				<Table
+					booleans={booleans}
 					onRowSelect={onSelect}
 					onRowDelete={onDelete}
 					body={rows}
-					header={ Object.keys(header).filter(name => header[name]) }/>
+					header={ Object.keys(header).filter(name => header[name]) }
+					map={map}/>
 
 				<div className="flex space-between align-center">
 					<Show when={withPagination}>

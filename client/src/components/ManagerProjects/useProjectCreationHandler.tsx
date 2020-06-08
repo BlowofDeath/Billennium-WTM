@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { CreateProjectMutation } from "../../graphql/mutations";
 import { useState, useEffect } from "react";
 
-type CreateProjectHandlerType = () => [(name: string, description: string) => void, {
+type CreateProjectHandlerType = () => [(name: string, description: string, isPinned: boolean) => void, {
 	loading: 	boolean,
 	data: 		any,
 	error: 		any
@@ -19,8 +19,8 @@ export const useProjectCreationHandler: CreateProjectHandlerType = () => {
 	}, [data, error, called])
 
 	return [
-		(name: string, description: string) => {
-			create({ variables: { name, description }});
+		(name: string, description: string, isPinned: boolean) => {
+			create({ variables: { name, description, isPinned }});
 			setTimeout(() => {
 				setLoading(false);
 			}, 2000);

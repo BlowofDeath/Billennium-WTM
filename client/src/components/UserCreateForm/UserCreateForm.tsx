@@ -1,5 +1,5 @@
-import React, { FC, useState, useEffect, SyntheticEvent, useContext } from 'react';
-import { FormControl, TextField, Button, Select, MenuItem, Switch } from '@material-ui/core';
+import React, { FC, useState, useEffect, SyntheticEvent, useContext, createRef, useRef } from 'react';
+import { FormControl, TextField, Button, Select, MenuItem, Switch, FormControlLabel } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 import EmailField from '../EmailField/EmailField';
 import PasswordField from '../PasswordField/PasswordField';
@@ -8,8 +8,9 @@ import Loader from '../Loader/Loader';
 import { useUserUpdater } from './useUserUpdater';
 import { User } from '../../core/User';
 import { Context } from '../App/Context';
+import { useApolloErrorHandler } from '../../hoc/useApolloErrorHandler';
 
-const StyledForm = styled('form')({
+const StyledForm = styled(({ children, ref, ...props }) => <form ref={ref} {...props}>{ children }</form>)({
 	position: "relative",
 	zIndex: 101,
 	background: "#fff",
@@ -37,7 +38,6 @@ export interface FormData {
 	password: 	string,
 	first_name: string,
 	last_name: 	string,
-	salary: 	number,
 	isActive: 	boolean
 }
 
@@ -45,7 +45,9 @@ export interface UserCreateFormProps {
 	/** */
 	userData?: FormData,
 	/** */
-	onCreateUser?: (data: FormData, error: any) => void,
+	onCreateUser?: (data: FormData, error: any, loading: boolean, called: boolean) => void,
+	/** */
+	onUpdateUser?: (data: FormData, error: any, loading: boolean, called: boolean) => void,
 	/** */
 	label?: {
 		edit: 		string,
@@ -64,13 +66,13 @@ const defaultData: FormData = {
 	password: 	"",
 	first_name: "",
 	last_name: 	"",
-	salary: 	0,
 	isActive: 	true
 }
 
 /** UserCreateForm */
 const UserCreateForm: FC<UserCreateFormProps> = ({
 	onCreateUser=function(){},
+	onUpdateUser=function(){},
 	label={
 		edit: 	"Update user",
 		create: "Create new user"
@@ -82,13 +84,15 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	userData
 }) => {
 	const { token } = useContext(Context);
-	const { update } = useUserUpdater();
-	const { signup, data, error, loading } = useFormCreateHandler();
+	const { update, ...updateResult } = useUserUpdater();
+	const { signup, ...createResult } = useFormCreateHandler();
 	const [formData, setFormData] = useState<FormData>(userData ?? defaultData);
+	const { handleError } = useApolloErrorHandler();
 
 	const _handleConfirm = (e: SyntheticEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
+		(e.target as HTMLFormElement).reset();
 		// use update handler
 		if (userData && token) {
 			update(userData as unknown as User, formData as unknown as User, token as string);
@@ -102,19 +106,35 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 	}
 
 	useEffect(() => {
-		if (userData)
-			setFormData(userData);
+		if (updateResult.error)
+			handleError(updateResult.error);
+	}, [updateResult.error])
+
+	useEffect(() => {
+		if (userData) {
+			setFormData({ ...userData, password: "" });
+		}
 		else
-			setFormData(defaultData);
+			setFormData({ ...defaultData, password: "" });
 	}, [userData, defaultData]);
 
 	useEffect(() => {
-		onCreateUser(data, error);
-	}, [data, error, onCreateUser]);
+		let mounted = true;
+		if (mounted)
+			onCreateUser(createResult.data, createResult.error, createResult.loading, createResult.called);
+		return () => { mounted = false };	
+	}, [createResult?.data, createResult?.loading, createResult?.error]);
 	
+	useEffect(() => {
+		let mounted = true;
+		if (mounted)
+			onUpdateUser(updateResult.data, updateResult.error, updateResult.loading, updateResult.called);
+		return () => { mounted = false };
+	}, [updateResult?.data, updateResult?.error, updateResult?.loading]);
+
 	return (
-		<StyledForm onClick={(e) => { e.stopPropagation() }} onSubmit={_handleConfirm}>
-			<Loader loading={loading}/>
+		<StyledForm onClick={(e: SyntheticEvent<HTMLFormElement>) => { e.stopPropagation() }} onSubmit={_handleConfirm}>
+			<Loader loading={createResult.loading || updateResult.loading}/>
 			<h2>{ userData ? label.edit : label.create }</h2>
 			<FormControl>
 				<EmailField
@@ -143,19 +163,13 @@ const UserCreateForm: FC<UserCreateFormProps> = ({
 					label="nazwisko"
 					onChange={(e) => { setFormData({ ...formData, last_name: e.target.value.trim() }) }}/>
 
-				<TextField
-					InputLabelProps={{
-						shrink: true
-					}}
-					value={formData.salary ?? 0}
-					required
-					type="number"
-					label="stawka"
-					onChange={(e) => { setFormData({ ...formData, salary: parseInt(e.target.value || "0") })} }/>
-
-				<Switch
-					checked={formData.isActive}
-					onChange={() => { setFormData({ ...formData, isActive: !formData.isActive }) }}/>
+				<FormControlLabel
+					label={ formData.isActive ? "Aktywny" : "Nieaktywny" }
+					control={
+						<Switch
+							checked={formData.isActive}
+							onChange={() => { setFormData({ ...formData, isActive: !formData.isActive }) }}/>
+				}/>
 
 				<Select
 					value={formData.role}

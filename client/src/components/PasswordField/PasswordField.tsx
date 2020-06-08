@@ -24,6 +24,7 @@ const PasswordField: FC<PasswordFieldProps & TextFieldProps> = ({
 	onPassword=function(){},
 	propName="Password",
 	initialValue="",
+	ref,
 	...props
 }) => {
 	const [password, setPassword] 	= useState<string>(initialValue);

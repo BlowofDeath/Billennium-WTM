@@ -1,8 +1,10 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useContext } from 'react';
 import moment, { Moment } from 'moment';
 import { StyledDayLabel, StyledList } from './Atoms';
+import { Context } from './Context';
 
 const DayLabel: FC = () => {
+	const { timeline } = useContext(Context);
 	const days: Array<ReactNode> = [];
 
 	const from: Moment = moment().day("Monday").subtract(1, "day");
@@ -15,9 +17,13 @@ const DayLabel: FC = () => {
 	}
 
 	return (
-		<StyledList>
-			{ days }
-		</StyledList>
+		<>
+		{
+			!timeline && <StyledList>
+				{ days }
+			</StyledList>
+		}
+		</>
 	)
 }
 

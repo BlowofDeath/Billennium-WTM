@@ -6,6 +6,7 @@ export const StyledListItem = styled(Row)({
 	width: "100%",
 	background: "#fefefe",
 	padding: "20px",
+	overflow: "hidden",
 	borderBottom: "1px solid #efefef",
 
 	"&:first-child": {

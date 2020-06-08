@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, SyntheticEvent, useContext } from 'react';
-import { InputAdornment, Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab'
+import { InputAdornment } from '@material-ui/core';
 import { StyledLoginPage, StyledLoginForm, StyledFormHeader, StyledButton } from './Atoms';
 import { useHistory } from 'react-router-dom';
 import { FiMail, FiKey } from 'react-icons/fi'
@@ -10,6 +9,7 @@ import EmailField from '../EmailField';
 import PasswordField from '../PasswordField/PasswordField';
 import { useLogin } from './useLogin';
 import Loader from '../Loader/Loader';
+import { useApolloErrorHandler } from '../../hoc/useApolloErrorHandler';
 
 const textFieldStyles = {
 	width: "100%",
@@ -22,6 +22,9 @@ const LoginPage: FC = () => {
 	const [email, setEmail] = useState<string | null>(null);
 	const [password, setPassword] = useState<string | null>(null);
 	const { login, data, loading, error } = useLogin();
+	const { handleError } = useApolloErrorHandler();
+
+	useEffect(() => { handleError(error) }, [error]);
 
 	useEffect(() => {
 		let mounted = true;
@@ -38,10 +41,6 @@ const LoginPage: FC = () => {
 		return () => { mounted = false };
 	}, [data, context, history]);
 
-	useEffect(() => {
-		console.log(error);
-	}, [error]);
-
 	const _confirm = (e: SyntheticEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!email || !password)
@@ -53,11 +52,6 @@ const LoginPage: FC = () => {
 	return (
 		<StyledLoginPage>
 			<StyledLoginForm onSubmit={_confirm}>
-				<Snackbar open={!loading && error ? true : false} anchorOrigin={{ vertical: "top", horizontal: "center" }} >
-					<Alert elevation={6} variant="filled" severity="error">
-						Nie ma takiego użytkownika!
-					</Alert>
-				</Snackbar>
 
 				<Loader loading={loading}/>
 

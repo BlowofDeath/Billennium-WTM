@@ -5,20 +5,24 @@ import { useState, useEffect } from 'react';
 
 export const useFormCreateHandler = () => {
 	const [loading, setLoading] = useState(false);
-	const [signup, { data, error, called }] = useMutation(CreateUserMutation);
+	const [create, { ...result }] = useMutation(CreateUserMutation);
 
 	useEffect(() => {
-		if (called && !data && !error)
-			setLoading(true);
-	}, [data, called, error])
+		if (result.data || result.error) {
+			setTimeout(() => {
+				setLoading(false);
+			}, 700);
+		}
+	}, [result])
 
 	return {
 		signup: (formData: FormData) => {
-			signup({ variables: formData });
-			setTimeout(() => {
-				setLoading(false);
-			}, 2000);
+			setLoading(true);
+			create({ variables: formData });
 		},
-		data, error, loading
+		data: result.data,
+		error: result.error,
+		loading,
+		called: result.called
 	}
 }

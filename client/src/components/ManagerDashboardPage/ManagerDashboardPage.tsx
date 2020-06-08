@@ -3,10 +3,13 @@ import moment from 'moment';
 import { FlexGroup, StyledSquareBlock, StatSecondaryText, StatNumber } from './Atoms';
 import { useQuery } from '@apollo/react-hooks';
 import { ManagerProjectsQuery } from '../../graphql/queries';
+import { Project } from '../../__generated__/generated';
 
 const ManagerDashboardPage: FC = () => {
 	const projectsQuery = useQuery(ManagerProjectsQuery);
-
+	const activeProjects = projectsQuery.data?.projects.filter((project: Project) => !project.isClosed);
+	const closedProjects = projectsQuery.data?.projects.filter((project: Project) => project.isClosed);
+	
 	return (
 		<Fragment>
 			<h2>Dashboard</h2>
@@ -15,12 +18,17 @@ const ManagerDashboardPage: FC = () => {
 					{ projectsQuery.data && <Fragment>
 							<h4>Projekty</h4>
 							<StatSecondaryText>Liczba prowadzonych aktywnych projektów</StatSecondaryText><br/>
-							<StatNumber>{ projectsQuery.data.projects.length }</StatNumber>
+							<StatNumber>{ activeProjects.length }</StatNumber>
 						</Fragment>
 					}
 				</StyledSquareBlock>
 				<StyledSquareBlock flex={2}>
-					Stat 1
+					{ projectsQuery.data && <Fragment>
+							<h4>Projekty</h4>
+							<StatSecondaryText>Liczba prowadzonych zamkniętych projektów</StatSecondaryText><br/>
+							<StatNumber>{ closedProjects.length }</StatNumber>
+						</Fragment>
+					}
 				</StyledSquareBlock>
 				<StyledSquareBlock flex={1}>
 					<h4>Dziś</h4>

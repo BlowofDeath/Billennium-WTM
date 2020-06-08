@@ -14,12 +14,14 @@ import { Column } from '../Atoms/Column';
 import { SecondaryText } from '../Atoms/SecondaryText';
 import { Button } from '@material-ui/core';
 import { useSettlementHandler } from './useSettlementHandler';
+import { aggregateWTRs } from '../../scripts/aggregateWTRs';
 
 const Schedule: FC = () => {
 	const { token } = useContext(Context);
 	const history = useHistory();
 	const { search } = useLocation();
 
+	const now = moment();
 	const query = parse(search, { parseNumbers: true });
 	const queryTime = moment([query.year as number, query.month as number]);
 	const displayTime = queryTime.isValid() ? queryTime : moment();
@@ -37,8 +39,6 @@ const Schedule: FC = () => {
 	});
 
 	refetch();
-
-	console.log({data})
 
 	useEffect(() => {
 		let mounted = true;
@@ -72,14 +72,16 @@ const Schedule: FC = () => {
 		let ev: CalendarRenderableEvent = {
 			render: (index: number, date: number) => (
 				<EventBlock key={index}>
-					{ wtrFrom.format("HH:mm") } - { wtrTo.format("HH:mm") }<br/>
-					{ record.project.name }
+					<span>{ wtrFrom.format("HH:mm") } - { wtrTo.format("HH:mm") }</span>
+					<span>{ record.project.name }</span>
 				</EventBlock>
 			),
 			date: moment([wtrFrom.year(), wtrFrom.month(), record.day]).valueOf()
 		}
 		return ev;
 	});
+
+	const TotalTimeHours = Math.floor(aggregateWTRs(data?.month?.workTimeRecords) / 60);
 
 	return (
 		<div>
@@ -96,6 +98,7 @@ const Schedule: FC = () => {
 				<Panel>
 					<Row>
 						<Column>
+							<h4>Łączna liczba przepracowanych godzin w tym misiącu: { TotalTimeHours }</h4>
 							<h2>Status miesiąca</h2>
 							<SecondaryText>
 								{ !data.month && 'NIEROZPOCZĘTY' }
@@ -105,7 +108,13 @@ const Schedule: FC = () => {
 							</SecondaryText>
 						</Column>
 						<Column>
-							<Button variant="outlined" color="primary" onClick={() => { closeMonth(data.month.id) }}>
+							<Button	
+								disabled={moment([year, month]).isSameOrAfter(now, "month")}
+								variant="outlined"
+								color="primary" 
+								onClick={() => {
+									closeMonth(data.month?.id)
+								}}>
 								Rozlicz
 							</Button>
 							<SecondaryText>

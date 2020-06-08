@@ -1,12 +1,23 @@
 import { useMutation } from "@apollo/react-hooks"
 import { PatchUserMutation } from "../../graphql/mutations";
 import { User } from "../../core/User";
+import { useEffect, useState } from "react";
 
 export const useUserUpdater = () => {
-	const [update, { data, loading, error }] = useMutation(PatchUserMutation);
+	const [loading, setLoading] = useState(false);
+	const [update, { ...result }] = useMutation(PatchUserMutation, { errorPolicy: 'all', onError: () => {} });
+
+	useEffect(() => {
+		if (result.data || result.error) {
+			setTimeout(() => {
+				setLoading(false);
+			}, 600);
+		}
+	}, [result])
 
 	return {
 		update: (original: User, user: User, token: string) => {
+			setLoading(true);
 			let diff: { [key: string]: any } = {
 				id: original.id
 			}
@@ -21,8 +32,11 @@ export const useUserUpdater = () => {
 					diff[property] = user[keyOfUser];
 				}
 			})
-			console.log(diff)
 			update({ variables: { ...diff, token } });
-		}, data, loading, error
+		},
+		loading,
+		data: result.data,
+		error: result.error,
+		called: result.called
 	}
 }

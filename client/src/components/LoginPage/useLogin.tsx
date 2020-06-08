@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { loginMutation } from "../../graphql/mutations";
 
 const useLogin = () => {
-	const [login, { data, loading, error }] = useMutation(loginMutation);
+	const [login, { data, loading, error }] = useMutation(loginMutation, { errorPolicy: "all", onError: () => {} });
 	
 	const _login = function(email: string, password: string) {
 		login({

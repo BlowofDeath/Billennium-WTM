@@ -18,6 +18,7 @@ export const Container = styled(Grid)({
 export const StyledAppBar = styled(AppBar)({
 	position: "relative",
 	padding: 15,
+	zIndex: 50,
 	display: "flex",
 	flexDirection: "row",
 	alignItems: "center"

@@ -17,10 +17,10 @@ export interface SettlementsListProps {
 const SettlementsList: FC<SettlementsListProps> = ({ settlements=[], settlementPostpendRender }) => {
 	
 	if (settlements.length === 0 || !settlements)
-		return <span>No result case</span>;
+		return <span>Brak wyników</span>;
 	
 	return (
-		<Fragment>
+		<Column style={{ width: "100%" }}>
 			{
 				settlements.map((settlement: Settlement, index: number) => {
 					const date = moment([settlement.year, settlement.month-1]);
@@ -50,7 +50,7 @@ const SettlementsList: FC<SettlementsListProps> = ({ settlements=[], settlementP
 					)
 				})
 			}
-		</Fragment>
+		</Column>
 	)
 }
 

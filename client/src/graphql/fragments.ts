@@ -7,7 +7,6 @@ export const UserFragment = gql`
 		last_name,
 		role,
 		email,
-		salary,
 		isActive
 	}
 `;
@@ -17,6 +16,7 @@ export const ProjectFragment = gql`
 		id,
 		name,
 		description,
-		isClosed
+		isClosed,
+		isPinned
 	}
 `;
