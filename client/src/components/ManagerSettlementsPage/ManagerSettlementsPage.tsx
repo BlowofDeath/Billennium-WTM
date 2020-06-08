@@ -23,7 +23,7 @@ import { useApolloErrorHandler } from '../../hoc/useApolloErrorHandler';
 import { Button } from '@material-ui/core';
 import { generujpdf2 } from '../../scripts/generatorPDFperOsoba';
 import { ReportPerPersonQuery } from './ReportPerPersonQuery';
-import { User } from '../../__generated__/generated';
+import { User } from '../../core/User';
 import { aggregateUserWTRS } from './aggregateUserWTRS';
 
 const ManagerSettlementPage: FC = () => {

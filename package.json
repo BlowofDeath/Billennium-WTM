@@ -4,6 +4,12 @@
 	"description": "Working time management",
 	"main": "backend/build/index.js",
 	"scripts": {
-		"start": "cd client && npm run build && cd ../backend && npm run build && npm run prod"
+		"start": "node backend/build/index.js",
+		"build": "cd client && yarn && yarn run build && cd ../backend && yarn && yarn run build && cd ../"
+	},
+	"heroku-run-build-script": true,
+	"engines": {
+		"node": "12.x",
+		"npm": "6.x"
 	}
 }
