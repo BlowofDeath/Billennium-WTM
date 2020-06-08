@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import { ApolloServer } from "apollo-server-express";
+import User from "./models/User";
 import typeDefs from "./typeDefs/typeDefs";
 import resolvers from "./resolvers/resolvers";
 import db from "./configs/database";
@@ -22,6 +23,23 @@ async function startServer() {
   // await db.sync({ force: true }).then(() => {
   //   console.log(`Database & tables created!`);
   // });
+  //This create or alter table
+  await db.sync({ alter: true }).then(async () => {
+    const exist = await User.findOne();
+    if (!exist) {
+      const user = await User.create({
+        email: process.env.ADMIN_EMAIL || "admin@example.com",
+        role: "Admin",
+        password: process.env.ADMIN_PASSWORD || "admin",
+        first_name: "admin",
+        last_name: "admin",
+        isActive: true,
+      });
+      console.log("\nFirst user account \n");
+      console.log(`email: ${user.email}`);
+      console.log(`password: ${user.password} \n`);
+    }
+  });
   app.use(express.static(process.env.FRONTEND_FILES || "../client/build"));
 
   const server = new ApolloServer({
