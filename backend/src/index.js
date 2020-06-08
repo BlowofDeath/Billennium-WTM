@@ -4,6 +4,7 @@ import { ApolloServer } from "apollo-server-express";
 import User from "./models/User";
 import typeDefs from "./typeDefs/typeDefs";
 import resolvers from "./resolvers/resolvers";
+import bcrypt from "bcrypt";
 import db from "./configs/database";
 import { verifyJWT } from "./middleware/jwtTool";
 import express from "express";
@@ -26,18 +27,20 @@ async function startServer() {
   //This create or alter table
   await db.sync({ alter: true }).then(async () => {
     const exist = await User.findOne();
+    const password = process.env.ADMIN_PASSWORD || "12345678";
+    const hash = bcrypt.hashSync(password, 10);
     if (!exist) {
       const user = await User.create({
         email: process.env.ADMIN_EMAIL || "admin@example.com",
         role: "Admin",
-        password: process.env.ADMIN_PASSWORD || "admin",
+        password: hash,
         first_name: "admin",
         last_name: "admin",
         isActive: true,
       });
       console.log("\nFirst user account \n");
       console.log(`email: ${user.email}`);
-      console.log(`password: ${user.password} \n`);
+      console.log(`password: ${password} \n`);
     }
   });
   app.use(express.static(process.env.FRONTEND_FILES || "../client/build"));
