@@ -1,8 +1,8 @@
-import { gql } from "apollo-server";
+import { gql } from "apollo-server-express";
 
 const monthType = gql`
   type Query {
-    month(token: String!, month: Int!, year: Int!): Month
+    month(month: Int!, year: Int!): Month
     monthForAllUsers(
       token: String!
       month: Int!

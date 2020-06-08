@@ -1,0 +1,20 @@
+@import '../../theme.sass';
+// ===========================================================================
+.Panel
+	position: 			relative
+	margin-bottom: 		15px
+	background-color: 	$panel-background
+	border: 			$panel-border
+	border-radius: 		$panel-border-radius
+	box-shadow: 		$panel-box-shadow
+	padding: 			$panel-padding
+	color: 				$panel-text-color
+
+@media screen and (max-width: 1366px)
+	.Panel
+		padding: 	10px
+		font-size: 	0.95rem
+
+@media screen and (max-width: 414px)
+	.Panel
+		flex-direction: 	column

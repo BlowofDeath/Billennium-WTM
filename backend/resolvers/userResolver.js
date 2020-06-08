@@ -3,11 +3,11 @@ import Month from "../models/Month";
 import WorkTimeRecord from "../models/WorkTimeRecord";
 import Project from "../models/Project";
 import bcrypt from "bcrypt";
-import { UserInputError, AuthenticationError } from "apollo-server";
+import { UserInputError, AuthenticationError } from "apollo-server-express";
 import validator from "validator";
 import { signJWT, verifyJWT } from "../middleware/jwtTool";
 import moment from "moment";
-import { QueryTypes } from "sequelize";
+import { QueryTypes, Op } from "sequelize";
 import db from "../configs/database";
 
 const userResolver = {
@@ -25,39 +25,36 @@ const userResolver = {
   },
   User: {
     projects: async ({ id }, args) => {
-      return await db.query(
-        `SELECT DISTINCT u.id FROM projects AS p LEFT JOIN worktimerecords AS w ON p.id = w.projectid LEFT JOIN months AS m ON w.monthid = m.id LEFT JOIN users AS u ON m.userid = u.id WHERE u.id = ${id}`,
-        { type: QueryTypes.SELECT }
-      );
+      return await Project.findAll({
+        include: [
+          {
+            required: true,
+            model: WorkTimeRecord,
+            include: {
+              model: Month,
+              where: { userId: id },
+            },
+          },
+        ],
+      });
+    },
+    activeWorkTimeRecord: async ({ id }, args) => {
+      const workTimeRecord = await WorkTimeRecord.findOne({
+        where: { to: null },
+        include: [
+          {
+            model: Month,
+            where: { userId: id },
+          },
+        ],
+      });
+      return workTimeRecord;
     },
   },
   Mutation: {
-    logout: async (_, { token }) => {
-      const { userId } = verifyJWT(token);
-      if (!userId) throw new AuthenticationError("Incorrect token");
-      const month = await Month.findOne({
-        where: {
-          userId,
-        },
-        order: [["createdAt", "DESC"]],
-      });
-
-      const wtr = await WorkTimeRecord.findOne({
-        where: {
-          monthId: month.id,
-        },
-        order: [["createdAt", "DESC"]],
-      });
-
-      const now = moment().valueOf();
-      wtr.to = now;
-      await wtr.save();
-
-      return "Succes";
-    },
     signup: async (
       _,
-      { role, email, password, first_name, last_name, salary, isActive }
+      { role, email, password, first_name, last_name, isActive }
     ) => {
       const exist = await User.findOne({ where: { email } });
       if (exist) throw new Error("User exist");
@@ -78,7 +75,6 @@ const userResolver = {
         password,
         first_name,
         last_name,
-        salary: salary || null,
         isActive: isActive || true,
       });
 
@@ -92,6 +88,7 @@ const userResolver = {
         throw new UserInputError("Wrong email adress");
       const user = await User.findOne({ where: { email } });
       if (!user) throw new Error("User not found");
+      if (!user.isActive) throw new Error("User isn't active");
       const resoult = bcrypt.compareSync(password, user.password);
       if (!resoult) throw new UserInputError("Password incorrect");
 
@@ -101,10 +98,12 @@ const userResolver = {
     },
     updateUser: async (
       _,
-      { token, id, email, first_name, last_name, salary, isActive, role }
+      { id, email, first_name, last_name, isActive, role },
+      { auth }
     ) => {
-      const { userId } = verifyJWT(token);
-      if (!userId) throw new AuthenticationError("Incorrect token");
+      if (!auth) throw new AuthenticationError("Incorrect token");
+      const { userId } = auth;
+
       const user = await User.findOne({ where: { id: userId } });
       if (!user) throw new Error("User not found");
       const userUpdate = await User.findOne({ where: { id } });
@@ -113,9 +112,10 @@ const userResolver = {
       if (email) {
         if (!validator.isEmail(email))
           throw new UserInputError("Wrong email adress");
-        const emailUsed = User.findOne({ where: { email } });
-        if (emailUsed && emailUsed.id != id)
-          throw new Error("Email already used");
+        const emailUsed = await User.findOne({
+          where: { email, id: { [Op.ne]: id } },
+        });
+        if (emailUsed) throw new Error("Email already used");
         userUpdate.email = email;
       }
       if (first_name) {
@@ -130,17 +130,10 @@ const userResolver = {
           throw new UserInputError("Last name must have at least 3 characters");
         userUpdate.last_name = last_name;
       }
-      if (salary) userUpdate.salary = salary;
-      if (isActive) userUpdate.isActive = isActive;
+      if (isActive != undefined) userUpdate.isActive = isActive;
       if (role) userUpdate.role = role;
       await userUpdate.save();
       return userUpdate;
-    },
-    removeUser: async (_, { id }) => {
-      const user = await User.findOne({ where: { id } });
-      if (!user) return null;
-      await User.destroy({ where: { id } });
-      return user;
     },
   },
 };
