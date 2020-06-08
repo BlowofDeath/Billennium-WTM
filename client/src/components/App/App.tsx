@@ -23,10 +23,11 @@ import { ApolloLink } from 'apollo-link';
 moment.locale('pl');
 
 const ENV = process.env.NODE_ENV;
+const PORT = ENV === 'development' ? 4000 : 80;
 const { hostname } = window.location;
 
 const httpLink = createHttpLink({
-	uri: `http://${hostname}:4000`
+	uri: `https://${hostname}:${PORT}`
 })
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
