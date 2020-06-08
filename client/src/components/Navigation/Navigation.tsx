@@ -23,7 +23,8 @@ const items: Array<MenuItem> = [
 	{
 		name: "Home",
 		to: '/',
-		Icon: FaHome
+		Icon: FaHome,
+		if: (context: ContextType) => context.user?.role !== 'Admin'
 	},
 	{
 		name: "Użytkownicy",

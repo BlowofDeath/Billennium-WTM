@@ -21,7 +21,7 @@ const Layout: FC<IProps> = ({ sidenav, main }) => {
 	const isAuthenticated = typeof token === 'string' && token !== null;
 
 	return (
-		<BrowserRouter>
+		<BrowserRouter basename={process.env.PUBLIC_URL}>
 			<ToastProvider placement="top-center" autoDismissTimeout={5000} autoDismiss>
 				{ !isAuthenticated && <Fragment>
 					<Route path="/login" exact component={LoginPage}/>

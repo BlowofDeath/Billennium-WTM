@@ -1,5 +1,5 @@
 import React, { StatelessComponent, useContext } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import Schedule from '../Schedule/Schedule';
 import Projects from '../Projects/Projects';
 import Logout from '../Logout/Logout';
@@ -17,6 +17,7 @@ const Router: StatelessComponent = () => {
 			{ user?.role === "Pracownik" && token && <Route path="/" exact component={Projects}/> }
 			{ user?.role === "Kierownik" && token && <Route path="/" exact component={ManagerDashboardPage}/> }
 
+			{ user?.role === "Admin" && token && <Route path="/" exact render={() => <Redirect to="/users"/>}/> }
 			{ user?.role === "Admin" && token && <Route path="/users" exact component={AdminUsersPage}/> }
 
 			{  user?.role === "Kierownik" && token && <Route path="/projects" exact component={ManagerProjects}/> }

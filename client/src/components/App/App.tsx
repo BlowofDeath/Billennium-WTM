@@ -24,7 +24,7 @@ moment.locale('pl');
 
 const ENV = process.env.NODE_ENV;
 const PROTOCOL = ENV === 'development' ? 'http' : 'https';
-const PORT = ENV === 'development' ? 4000 : (PROTOCOL === 'https') ? 443 : 80;
+const PORT = ENV === 'development' ? 4001 : (PROTOCOL === 'https') ? 443 : 80;
 const { hostname } = window.location;
 
 const httpLink = createHttpLink({
