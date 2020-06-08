@@ -1,0 +1,9 @@
+{
+	"name": "billennium-wtm",
+	"version": "1.0.0",
+	"description": "Working time management",
+	"main": "backend/build/index.js",
+	"scripts": {
+		"start": "cd client && npm run build && cd ../backend && npm run build && npm run prod"
+	}
+}
