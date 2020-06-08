@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import db from "./configs/database";
 import { verifyJWT } from "./middleware/jwtTool";
 import express from "express";
+import path from "path";
 const app = express();
 
 async function startServer() {
@@ -43,7 +44,6 @@ async function startServer() {
       console.log(`password: ${password} \n`);
     }
   });
-  app.use(express.static(process.env.FRONTEND_FILES || "../client/build"));
 
   const server = new ApolloServer({
     typeDefs,
@@ -67,7 +67,30 @@ async function startServer() {
     },
   });
 
+  if (process.env.NODE_ENV === "production") {
+    app.use(
+      express.static(
+        path.join(
+          __dirname,
+          process.env.FRONTEND_FILES || "/../../client/build"
+        )
+      )
+    );
+    app.get("*", (request, response) => {
+      response.sendFile(
+        path.join(
+          __dirname,
+          process.env.FRONTEND_FILES || "/../../client/build",
+          "index.html"
+        )
+      );
+    });
+  } else {
+    app.use(express.static(process.env.FRONTEND_FILES || "../client/build"));
+  }
+
   server.applyMiddleware({ app });
+
   const port = process.env.PORT || 4001;
   app.listen({ port }, () =>
     console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`)
