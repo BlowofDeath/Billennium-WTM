@@ -27,7 +27,7 @@ const PORT = ENV === 'development' ? 4000 : 80;
 const { hostname } = window.location;
 
 const httpLink = createHttpLink({
-	uri: `https://${hostname}:${PORT}`
+	uri: `https://${hostname}:${PORT}/graphql`
 })
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
