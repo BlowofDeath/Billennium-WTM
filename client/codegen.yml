@@ -1,0 +1,11 @@
+overwrite: true
+schema: "http://192.168.1.101:4000"
+documents: "src/**/*.{ts,tsx}"
+generates:
+  src/__generated__/generated.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+config:
+  withHooks: true

@@ -1,0 +1,5 @@
+backend/database.sqlite
+backend/src/.env
+backend/build
+backend/2database.sqlite
+backend/yarn.lock

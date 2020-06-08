@@ -1,0 +1,81 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/react-components": "^3.1.5",
+    "@apollo/react-hoc": "^3.1.5",
+    "@apollo/react-hooks": "^3.1.5",
+    "@date-io/moment": "1.x",
+    "@material-ui/core": "^4.9.14",
+    "@material-ui/lab": "^4.0.0-alpha.53",
+    "@material-ui/pickers": "^3.2.10",
+    "@nivo/pie": "^0.61.1",
+    "@operational/components": "^18.0.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/react-toast-notifications": "^2.4.0",
+    "@types/styled-components": "^5.1.0",
+    "animate.css": "^4.1.0",
+    "apollo-boost": "^0.4.9",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-link": "^1.2.14",
+    "apollo-link-context": "^1.0.20",
+    "apollo-link-error": "^1.1.13",
+    "apollo-link-http": "^1.5.17",
+    "classnames": "^2.2.6",
+    "graphql": "^15.0.0",
+    "jspdf": "^1.5.3",
+    "moment": "^2.26.0",
+    "node-sass": "^4.14.1",
+    "pdfmake": "^0.1.65",
+    "prop-types": "^15.7.2",
+    "query-string": "^6.12.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-icons": "^3.10.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.1",
+    "react-swipeable": "^5.5.1",
+    "react-toast-notifications": "^2.4.0",
+    "styled-components": "^5.1.0",
+    "typescript": "~3.7.2",
+    "validate.js": "^0.13.1"
+  },
+  "scripts": {
+    "start": "concurrently \"react-scripts start\" \"yarn generate --watch\"",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "generate": "graphql-codegen --config codegen.yml"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.15.0",
+    "@graphql-codegen/introspection": "1.15.0",
+    "@graphql-codegen/typescript": "^1.15.0",
+    "@graphql-codegen/typescript-operations": "^1.15.0",
+    "@graphql-codegen/typescript-react-apollo": "^1.15.0",
+    "concurrently": "^5.2.0"
+  }
+}

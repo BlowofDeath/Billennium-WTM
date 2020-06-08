@@ -1,0 +1,40 @@
+.Checkbox
+	min-height: 20px
+	position: relative
+	display: flex
+	align-items: center
+	user-select: none
+	margin: 5px
+
+	> input, .checkbox__mark
+		position: absolute
+		left: 0
+		top: 0
+
+	> input
+		width: 0
+		height: 0
+		opacity: 0
+		z-index: 2
+
+	> label
+		margin-left: 24px
+
+	> input:checked ~ .checkbox__mark
+		background: #333333
+
+	.checkbox__mark__icon
+		color: #f1f1f1
+
+	.checkbox__mark:hover
+		background: #f1f1f1
+
+	.checkbox__mark
+		transition: background 0.2s ease-in-out
+		display: flex
+		align-items: center
+		justify-content: center
+		width: 20px
+		height: 20px
+		border: 1px solid #999
+		cursor: pointer

@@ -1,0 +1,18 @@
+@import '../../theme.sass'
+
+.Option
+	transition: 		all 0.2s ease
+	width: 				min-content
+	height: 			min-content
+	background: 		$option-bg
+	padding: 			$option-padding
+	border-radius: 		$option-radius
+	border: 			$option-border
+	margin-right: 		2px
+.Option:hover
+	cursor: 			pointer
+	background: 		$option-hover-bg
+	color: 				$option-hover-text-color
+.Option.active
+	background: 		$option-active-bg
+	color: 				$option-active-text-color
